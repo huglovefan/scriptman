@@ -15,9 +15,6 @@
 			width: 390px;
 			overflow-x: hidden;
 		}
-		html.popup #search {
-			min-width: 100%;
-		}
 		html.popup a.scriptListItem {
 			word-wrap: wrap;
 		}
@@ -27,9 +24,33 @@
 		html.popup .no-popup {
 			display: none;
 		}
-		#scripts.no-scripts::before {
-			content: attr(data-no-scripts-message);
+		.message {
 			color: gray;
+			cursor: default;
+		}
+		@media (max-width: 365px) {
+			#searchrow select,
+			#searchrow input {
+				width: 100%;
+			}
+			#searchrow select {
+				display: block;
+				margin-bottom: 0.2em;
+			}
+			#searchrow input {
+				display: block;
+			}
+		}
+		@media (min-width: 365px) {
+			#searchrow {
+				display: flex;
+			}
+			#searchrow > * + * {
+				margin-left: 0.5ch;
+			}
+			#searchrow input {
+				flex: auto;
+			}
 		}
 	</style>
 </head>
@@ -40,16 +61,7 @@
 		<span class="popup-only"><a href="scripts.html">scriptman</a></span>
 	</nav>
 	<hr>
-	<div class="row">
-		<input type="search" id="search" spellcheck="false" placeholder="https://example.org/">
-	</div>
-	<div class="row">
-		<ul id="scripts" class="no-scripts" data-no-scripts-message="loading..."></ul>
-	</div>
-	<div class="row">
-		<a href="editor.html?mode=new" id="newLink">new script</a>
-		<a href="xport.html">import / export</a>
-	</div>
+	<div id="scripts"></div>
 </body>
 
 </html>

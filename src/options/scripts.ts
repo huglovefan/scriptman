@@ -1,50 +1,15 @@
-import {select, createElement, selectAll, documentLoaded} from "./all";
-import browser from "webextension-polyfill";
-import {Script} from "../background/Script";
-import scriptManager from "./scriptManagerRemote";
-import {hrefNoHash} from "../misc";
+import Vue from "vue";
+import scripts from "./scripts.vue";
+import {documentLoaded} from "./all";
 
-select; // not unused
+const vue = new Vue({render: h => h(scripts)});
 
-{
-
-function select (selector: "ul#scripts", scope: Document): HTMLUListElement;
-function select (selector: "a#newLink", scope: Document): HTMLAnchorElement;
-// @ts-ignore
-function select (selector: "input#search", scope: Document): HTMLInputElement;
-
-//
-//
-//
-
-const createScriptListItem = (id: string, script: Script) =>
-	createElement(
-		"li",
-		null,
-		createElement(
-			"a",
-			{
-				className: "scriptListItem",
-				href: "editor.html?mode=edit&id=" + encodeURIComponent(id)
-			},
-			script.name,
-			(!script.enabled) ? " (disabled)" : ""
-		)
-	);
-
-//
-//
-//
+documentLoaded()
+	.then(() => vue.$mount("#scripts"));
 
 /**
  * if the page is being shown in the browser action popup
- */
-const isPopup = (() => {
-	const params = new URLSearchParams(location.search);
-	return Boolean(Number(params.get("popup") || "0") || 0);
-})();
-
-if (isPopup) document.documentElement.classList.add("popup");
+ *
 
 const activeTab: Promise<chrome.tabs.Tab[]> | null =
 	isPopup ?
@@ -166,3 +131,5 @@ documentLoaded()
 	.then(main);
 
 }
+
+*/
