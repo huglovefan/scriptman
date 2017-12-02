@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>scripts - scriptman</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="all.css">
+	<script src="../js/commons-background-options.js"></script>
+	<script src="../js/commons-options.js"></script>
+	<script src="../js/editor.js"></script>
+	<template id="matchTemplate">
+		<div class="row match">
+			<select name="matchType">
+				<option value="domain">urls on the domain</option>
+				<option value="regex">urls matching</option>
+			</select>
+			<input type="text" name="matchValue">
+			<button name="removeMatch">remove</button>
+		</div>
+	</template>
+	<template id="sectionTemplate">
+		<fieldset class="row section">
+			<legend></legend>
+			<label class="row">
+				<div class="label">type</div>
+				<select name="sectionType">
+					<option value="js">script</option>
+					<option value="css">style</option>
+				</select>
+			</label>
+			<label class="row" data-section-type="js">
+				<div class="label">run-at</div>
+				<select name="sectionRunAt" title="when to run the script">
+					<option value="documentStart" title="as soon as possible">document-start</option>
+					<option value="documentEnd" selected title="when the page has finished loading">document-end</option>
+					<option value="documentIdle" title="after the page and any subresources have finished loading">document-idle</option>
+				</select>
+			</label>
+			<label class="row" data-section-type="js">
+				<div class="label">context</div>
+				<select name="sectionContext">
+					<option value="extension">extension</option>
+					<option value="page">page</option>
+				</select>
+			</label>
+			<label class="row" data-section-type="css">
+				<div class="label">css origin</div>
+				<select name="sectionCssOrigin">
+					<option value="user">user</option>
+					<option value="author">author</option>
+				</select>
+			</label>
+			<label class="row">
+				<div class="label">frame behavior</div>
+				<select name="sectionFrameBehavior">
+					<option value="allFrames">all frames</option>
+					<option value="topFrameOnly">top frame only</option>
+					<option value="subFramesOnly">sub-frames only</option>
+				</select>
+			</label>
+			<div class="row">
+				<textarea name="sectionBody" rows="12" spellcheck="false"></textarea>
+			</div>
+			<details class="row matchesRow">
+				<summary class="label matches">matches</summary>
+				<div name="matchArea"></div>
+				<button name="addMatch">add</button>
+			</details>
+			<details class="row">
+				<summary class="label excludes">excludes</summary>
+				<div name="excludeArea"></div>
+				<button name="addExclude">add</button>
+			</details>
+			<div class="row">
+				<div class="label">actions</div>
+				<button name="removeSection">remove section</button>
+			</div>
+		</fieldset>
+	</template>
+	<style>
+		fieldset[name=editor] {
+			border: none;
+			margin: 0;
+			margin-top: 0.5em;
+			padding: 0;
+		}
+		[name="sectionArea"] {
+			counter-reset: sections;
+		}
+		[name="sectionArea"] > fieldset {
+			counter-increment: sections;
+		}
+		[name="sectionArea"] > fieldset > legend::before {
+			content: "section " counter(sections);
+		}
+		
+		div[name=matchArea]:empty::before {
+			content: "(all urls)";
+			color: gray;
+			display: block;
+			margin-bottom: 0.5em;
+		}
+		div[name=excludeArea]:empty::before {
+			content: "(none)";
+			color: gray;
+			display: block;
+			margin-bottom: 0.5em;
+		}
+		
+		div.match {
+			margin: 0.5em 0;
+			padding: 0;
+			border: none;
+			display: flex;
+		}
+		div.match > * + * {
+			margin-left: 0.5ch;
+		}
+		input[name=matchValue] {
+			flex: auto;
+		}
+		
+		summary.matches[data-count]::after {
+			content: " (" attr(data-count) ")";
+		}
+		summary.excludes[data-count]::after {
+			content: " (" attr(data-count) ")";
+		}
+	</style>
+</head>
+
+<body>
+	<nav class="row">
+		<a href="scripts.html">scripts</a>
+		&gt;
+		<span>editor</span>
+	</nav>
+	<hr>
+	<fieldset name="editor">
+		<label class="row">
+			<div class="label">name</div>
+			<input type="text" name="scriptName">
+		</label>
+		<label class="row">
+			<input type="checkbox" name="scriptEnabled" checked> <span class="label">enabled</span>
+		</label>
+		<div class="row">
+			<div name="sectionArea"></div>
+			<button name="addSection">add section</button>
+		</div>
+		<div class="row">
+			<div class="label">actions</div>
+			<button name="saveScript">save</button>
+			<button name="deleteScript">delete</button>
+		</div>
+	</fieldset>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "build": "cross-env NODE_ENV=production gulp",
+    "build-dev": "cross-env NODE_ENV=development gulp",
+    "zip": "cross-env NODE_ENV=production gulp zip"
+  },
+  "dependencies": {
+    "@types/chrome": "^0.0.54",
+    "cross-env": "^5.1.1",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.0",
+    "gulp-exports2json": "^0.1.1",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-uglify-es": "^0.1.7",
+    "gulp-zip": "^4.0.0",
+    "ts-loader": "^3.2.0",
+    "typescript": "^2.7.0-dev.20171201",
+    "uglifyjs-webpack-plugin": "^1.1.2",
+    "webextension-polyfill": "^0.2.1",
+    "webpack": "^3.9.1",
+    "webpack-stream": "^4.0.0"
+  }
+}

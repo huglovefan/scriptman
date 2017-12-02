@@ -1,0 +1,63 @@
+* {
+	box-sizing: border-box;
+}
+
+[hidden] {
+	display: none!important;
+}
+
+html {
+	background-color: #eee;
+	min-height: 100%;
+}
+body {
+	background-color: white;
+	font-size: 0.75em;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	max-width: 800px;
+	padding: 8px;
+	margin: -8px auto 8px auto;
+}
+
+a {
+	color: #555;
+}
+a:active {
+	color: #000;
+}
+
+.row {
+	display: block;
+	margin-top: 0.75em;
+	margin-bottom: 0.75em;
+}
+.match {
+	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
+.row > .row:first-of-type {
+	margin-top: 0em;
+}
+.label {
+	cursor: default;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+textarea {
+	resize: vertical;
+	width: 100%;
+	tab-size: 4;
+	white-space: pre;
+}
+hr {
+	border: none;
+	border-bottom: 1px solid #a9a9a9;
+}
+fieldset {
+	border: 1px solid #a9a9a9;
+}
+
+.row > input[type="checkbox"]:first-child,
+.row > input[type="checkbox"]:first-child + .label:last-child {
+	vertical-align: middle;
+}
