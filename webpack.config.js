@@ -32,6 +32,22 @@ module.exports = {
 			{
 				test: /\.ts$/i,
 				loader: "ts-loader",
+				options: {
+					appendTsSuffixTo: [
+						/\.vue$/i,
+					]
+				}
+			},
+			{
+				test: /\.vue$/i,
+				loader: "vue-loader",
+				options: {
+					esModule: true,
+					extract: false,
+					loaders: {
+						ts: "ts-loader"
+					}
+				}
 			}
 		],
 	},
@@ -39,6 +55,7 @@ module.exports = {
 		extensions: [
 			".ts",
 			".js",
+			".vue",
 		],
 	},
 	plugins: [
