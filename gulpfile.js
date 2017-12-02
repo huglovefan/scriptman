@@ -13,7 +13,7 @@ const prod = (process.env.NODE_ENV === "production");
 console.assert(dev ^ prod);
 
 gulp.task("scripts", () => {
-	return gulp.src("./src/**/*.ts")
+	return gulp.src(["./src/**/*.ts", "./src/**/*.vue"])
 		.pipe(webpack(require("./webpack.config.js")))
 		.pipe(gulp.dest("./dist/extension/js/"));
 });
@@ -54,7 +54,7 @@ gulp.task("manifest", () => {
 });
 
 gulp.task("watch", ["scripts", "static-scripts", "html", "css", "manifest", "zip"], () => {
-	gulp.watch("./src/**/*.ts", ["scripts"]);
+	gulp.watch(["./src/**/*.ts", "./src/**/*.vue"], ["scripts"]);
 	gulp.watch(["!./static/manifest.js", "./static/**/*.js"] ["static-scripts"]); // doesn't seem to work?
 	gulp.watch("./static/**/*.html", ["html"]);
 	gulp.watch("./static/**/*.css", ["css"]);
