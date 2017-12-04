@@ -1,9 +1,9 @@
-import {SyntaxCheckOptions} from "./editor/syntaxCheck";
-import Editor from "./editor/Editor";
+import {documentLoaded} from "./all";
 
-export const syntaxCheckOptions: SyntaxCheckOptions = {
-	strictMode: true,
-	wrapFunction: "arrow",
-};
+import Vue from "vue";
+import editor from "./editor.vue";
 
-export const editor = Editor.init();
+const vue = new Vue({render: h => h(editor)});
+
+documentLoaded()
+	.then(() => vue.$mount("#editor"));

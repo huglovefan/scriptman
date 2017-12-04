@@ -83,7 +83,8 @@ module.exports = {
 		...(prod ? [new UglifyJsPlugin({uglifyOptions})] : []),
 	],
 	output: {
-		path: path.resolve(__dirname, "dist/extension/js"),
+		path: path.resolve(__dirname, "dist/extension/js/"),
+		publicPath: "/js/",
 		filename: "[name].js",
 	},
 };

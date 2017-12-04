@@ -4,7 +4,7 @@ import initTextarea from "./initTextarea";
 import {AnyMatchInit} from "../../background/Match";
 import {syntaxCheck} from "./syntaxCheck";
 import {MatchForm, MatchFormElement} from "./MatchForm";
-import {editor, syntaxCheckOptions} from "../editor";
+import {editor, syntaxCheckOptions} from "../editormain";
 
 select; // not unused
 

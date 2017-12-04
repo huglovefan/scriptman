@@ -1,7 +1,7 @@
 import {SectionFormElement, SectionForm} from "./SectionForm";
 import {syntaxCheck} from "./syntaxCheck";
 import {select} from "../all";
-import {syntaxCheckOptions} from "../editor";
+import {syntaxCheckOptions} from "../editormain";
 
 select; // not unused
 
