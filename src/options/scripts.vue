@@ -37,14 +37,32 @@
 	import {hrefNoHash, escapeRegExp, entriesToObject} from "../misc";
 	import {Script} from "../background/Script";
 	import {createElement} from "./all";
+	
+	const isPopup = (() => {
+		const params = new URLSearchParams(location.search);
+		return Boolean(Number(params.get("popup") || "0") || 0);
+	})();
+	
+	if (isPopup) {
+		document.documentElement.classList.add("popup");
+		document.head.append(createElement("base", {target: "_blank"}));
+	}
+	
+	const activeTabPromise =
+		isPopup && browser.tabs.query({active: true, currentWindow: true});
+	const activeTabURLPromise =
+		activeTabPromise && activeTabPromise.then((tabs: chrome.tabs.Tab[]) => {
+			return new URL(tabs[0].url!);
+		});
+	
+	const allScriptsPromise =
+		ScriptManager.getAll()
+			.then(entries => entriesToObject([...entries]));
+	
 	export default {
 		data () {
-			const isPopup = (() => {
-				const params = new URLSearchParams(location.search);
-				return Boolean(Number(params.get("popup") || "0") || 0);
-			})();
 			return {
-				isPopup,
+				isPopup, // to use it in the template
 				scripts: null,
 				search: "",
 				searchType: isPopup ? "url" : "name",
@@ -61,12 +79,10 @@
 			};
 		},
 		async created (this: any) {
-			if (this.isPopup) {
-				document.documentElement.classList.add("popup");
-				document.head.append(createElement("base", {target: "_blank"}));
-				browser.tabs.query({active: true, currentWindow: true})
-					.then((tabs: chrome.tabs.Tab[]) => {
-						const url = new URL(tabs[0].url!);
+			if (isPopup) {
+				activeTabURLPromise!
+					.then((url: URL) => {
+						// todo: this should just be a check for "can scripts run here"
 						if (/^https?:$/.test(url.protocol)) {
 							this.search = hrefNoHash(url);
 							this.updateSearch();
@@ -74,10 +90,11 @@
 						this.tempHideAll = false;
 					});
 			}
-			ScriptManager.getAll()
-				.then(entries => {
-					const scripts = entriesToObject([...entries]);
-					Object.freeze(scripts); // important, avoid leaking memory
+			allScriptsPromise
+				.then(scripts => {
+					// the script instances persist on the background page,
+					// so having vue make them reactive causes a memory leak
+					Object.freeze(scripts);
 					this.scripts = scripts;
 				});
 		},
@@ -107,7 +124,9 @@
 					case "name":
 						try {
 							this.searchRegex = RegExp(
-								this.search.split(/\s+/).map(escapeRegExp).join(".*")
+								this.search.split(/\s+/)
+									.map((w: string) => `(?=.*?${escapeRegExp(w)})`)
+									.join("")
 							, "ui");
 						} catch (error) {
 							this.searchRegex = null;
