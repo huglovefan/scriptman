@@ -17,7 +17,7 @@
 				</div>
 				<li v-for="(script, id) in scripts"
 					v-if="!tempHideAll && scripts !== null && scriptCount() !== 0 && shouldShowScript(script)">
-					<a v-bind:href="'editor.html?id=' + id">{{script.name}}</a>
+					<a v-bind:href="'editor.html?mode=edit&id=' + id">{{script.name}}</a>
 				</li>
 				<div class="message" v-if="scripts && scriptCount() !== 0 && !hasVisibleScripts">
 					no matching scripts
