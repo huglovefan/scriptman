@@ -101,7 +101,7 @@
 							this.searchURL = new URL(this.search);
 						} catch (error) {
 							this.searchURL = null;
-							// error message
+							// todo: show an error message
 						}
 						break;
 					case "name":
@@ -111,7 +111,7 @@
 							, "ui");
 						} catch (error) {
 							this.searchRegex = null;
-							// error message
+							// todo: show an error message
 						}
 						break;
 				}
