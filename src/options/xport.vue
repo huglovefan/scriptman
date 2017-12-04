@@ -12,7 +12,7 @@
 
 <script lang="ts">
 	import browser from "webextension-polyfill";
-	import scriptManager from "./scriptManagerRemote";
+	import ScriptManager from "./scriptManagerRemote";
 	export default {
 		data: function () {
 			return {
@@ -27,7 +27,7 @@
 					if (Object.prototype.toString.call(data) !== "[object Object]") {
 						throw new Error("Import data must be an object.");
 					}
-					await scriptManager.importStorage(data);
+					await ScriptManager.importStorage(data);
 				} catch (error) {
 					console.error(error);
 					alert("Import failed:\n\n" + error);

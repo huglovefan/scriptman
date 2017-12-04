@@ -203,7 +203,7 @@ namespace Editor {
 		}
 		
 		private async loadScript () {
-			// const script = await scriptManager.getRaw(this.id);
+			// const script = await ScriptManager.getRaw(this.id);
 			// faster
 			const script = <ScriptInit | undefined> (await browser.storage.local.get(this.id))[this.id];
 			if (script === undefined) {

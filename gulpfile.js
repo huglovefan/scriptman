@@ -54,7 +54,11 @@ gulp.task("manifest", () => {
 });
 
 gulp.task("watch", ["scripts", "static-scripts", "html", "css", "manifest", "zip"], () => {
-	gulp.watch(["./src/**/*.ts", "./src/**/*.vue"], ["scripts"]);
+	gulp.watch([
+		"./webpack.config.js",
+		"./uglifyOptions.js",
+		"./src/**/*.ts", "./src/**/*.vue"
+	], ["scripts"]);
 	gulp.watch(["!./static/manifest.js", "./static/**/*.js"] ["static-scripts"]); // doesn't seem to work?
 	gulp.watch("./static/**/*.html", ["html"]);
 	gulp.watch("./static/**/*.css", ["css"]);

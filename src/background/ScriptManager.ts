@@ -1,26 +1,42 @@
+//
+// the place for "misc stuff" meaning i'm too lazy to figure out where they should really go
+//
+
 import {BackgroundPageWindow} from "./background";
 import {Script, ScriptInit} from "./Script";
 import {AnySection} from "./Section";
 import {Connector} from "./Connector";
 import browser from "webextension-polyfill";
+import Deferred from "./Deferred";
 
-export type ScriptManager = typeof scriptManager;
-
-export namespace scriptManager {
+namespace ScriptManager {
 	
-	const scripts = new Map<string, Script>();
-	const connectors = new Map<AnySection, Connector>();
+	export type StorageChanges = {[key: string]: chrome.storage.StorageChange};
+	export type SnapshotData = {
+		tabs: chrome.tabs.Tab[],
+		frames: {[tabId: number]: chrome.webNavigation.GetAllFrameResultDetails[]},
+	};
 	
-	//
-	//
-	//
+	function isMetaKey (key: string) {
+		return /^__[^]*__$/.test(key);
+	}
 	
-	/** resolves when `scripts` is populated */
-	const loaded = init();
-	
-	//
-	//
-	//
+	async function getSnapshot () {
+		
+		const tabs: chrome.tabs.Tab[] = await browser.tabs.query({});
+		
+		const framePromises: {[tabId: number]: Promise<chrome.webNavigation.GetAllFrameResultDetails[]>} = {};
+		for (const tab of tabs) {
+			framePromises[tab.id!] = browser.webNavigation.getAllFrames({tabId: tab.id!});
+		}
+		
+		const frames: {[tabId: number]: chrome.webNavigation.GetAllFrameResultDetails[]} = {};
+		for (const tabId in framePromises) {
+			frames[tabId] = await framePromises[tabId];
+		}
+		
+		return {tabs, frames};
+	}
 	
 	async function fixupAndApplyStorage (storage: {[key: string]: any}, alwaysApply = false) {
 		
@@ -63,9 +79,23 @@ export namespace scriptManager {
 		return storage;
 	}
 	
-	const isMetaKey = (key: string) => /^__[^]*__$/.test(key);
+	const scripts = new Map<string, Script>();
+	const connectors = new Map<AnySection, Connector>();
+	const loaded = new Deferred();
 	
-	async function init () {
+	export async function init () {
+		
+		if (loaded.done) return;
+		
+		// inject scripts to existing tabs on browser startup
+		chrome.runtime.onStartup.addListener(async () => {
+			const snapshotDataPromise = getSnapshot();
+			await loaded;
+			const snapshotData = await snapshotDataPromise;
+			for (const [_section, connector] of connectors) {
+				connector.startupInject(snapshotData);
+			}
+		});
 		
 		block: {
 			
@@ -88,15 +118,11 @@ export namespace scriptManager {
 		}
 		
 		browser.storage.onChanged.addListener(onStorageChanged);
+		
+		loaded.resolve();
 	}
 	
-	//
-	//
-	//
-	
-	type StorageChanges = {[key: string]: chrome.storage.StorageChange};
-	
-	function onStorageChanged (changes: StorageChanges, areaName: string) {
+	function onStorageChanged (changes: ScriptManager.StorageChanges, areaName: string) {
 		
 		if (areaName !== "local") {
 			return;
@@ -118,11 +144,7 @@ export namespace scriptManager {
 		}
 	}
 	
-	//
-	//
-	//
-	
-	async function uninject (snapshot: Promise<SnapshotData>, section: AnySection) {
+	async function uninject (snapshot: Promise<ScriptManager.SnapshotData>, section: AnySection) {
 		const data = await snapshot;
 		for (const tab of data.tabs) {
 			for (const frame of data.frames[tab.id!]) {
@@ -188,46 +210,7 @@ export namespace scriptManager {
 		scripts.set(id, script);
 	}
 	
-	//
-	//
-	//
-	
-	// inject scripts to existing tabs on browser startup
-	
-	chrome.runtime.onStartup.addListener(async () => {
-		const snapshotDataPromise = getSnapshot();
-		await loaded;
-		const snapshotData = await snapshotDataPromise;
-		for (const [_section, connector] of connectors) {
-			connector.startupInject(snapshotData);
-		}
-	});
-	
-	export type SnapshotData = {
-		tabs: chrome.tabs.Tab[],
-		frames: {[tabId: number]: chrome.webNavigation.GetAllFrameResultDetails[]},
-	};
-	
-	async function getSnapshot () {
-		
-		const tabs: chrome.tabs.Tab[] = await browser.tabs.query({});
-		
-		const framePromises: {[tabId: number]: Promise<chrome.webNavigation.GetAllFrameResultDetails[]>} = {};
-		for (const tab of tabs) {
-			framePromises[tab.id!] = browser.webNavigation.getAllFrames({tabId: tab.id!});
-		}
-		
-		const frames: {[tabId: number]: chrome.webNavigation.GetAllFrameResultDetails[]} = {};
-		for (const tabId in framePromises) {
-			frames[tabId] = await framePromises[tabId];
-		}
-		
-		return {tabs, frames};
-	}
-	
-	//
-	//
-	//
+	// public api
 	
 	export async function getAll () {
 		await loaded;
@@ -247,7 +230,10 @@ export namespace scriptManager {
 		await loaded;
 		await fixupAndApplyStorage(storage, true);
 	}
-	
 }
 
-(<BackgroundPageWindow> window).scriptManager = scriptManager;
+type ScriptManager = typeof ScriptManager;
+
+export default ScriptManager;
+
+(<BackgroundPageWindow> window).ScriptManager = ScriptManager;

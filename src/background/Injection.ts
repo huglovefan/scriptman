@@ -1,16 +1,21 @@
 import browser from "webextension-polyfill";
 
+// https://crbug.com/632009
 // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/new
-type InjectDetails = chrome.tabs.InjectDetails & {cssOrigin?: string};
+type InjectDetails = chrome.tabs.InjectDetails & {cssOrigin?: "user" | "author"};
+
+// https://crbug.com/608854
+// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/new
+type TabsAPI = keyof typeof chrome.tabs | "removeCSS";
 
 export abstract class Injection {
-	protected readonly injectDetails: chrome.tabs.InjectDetails;
+	protected readonly injectDetails: InjectDetails;
 	constructor (injectDetails: Readonly<InjectDetails>) {
 		this.injectDetails = injectDetails;
 	}
 	abstract inject (tabId: number, frameId: number): Promise<boolean>;
 	abstract remove (tabId: number, frameId: number): Promise<boolean>;
-	protected async callTabsAPI (tabId: number, frameId: number, method: keyof typeof chrome.tabs) {
+	protected async callTabsAPI (method: TabsAPI, tabId: number, frameId: number) {
 		try {
 			this.injectDetails.frameId = frameId;
 			await browser.tabs[method](tabId, this.injectDetails);
@@ -23,17 +28,16 @@ export abstract class Injection {
 
 export class CssInjection extends Injection {
 	async inject (tabId: number, frameId: number) {
-		return super.callTabsAPI(tabId, frameId, "insertCSS");
+		return super.callTabsAPI("insertCSS", tabId, frameId);
 	}
 	async remove (tabId: number, frameId: number) {
-		// https://crbug.com/608854
-		return super.callTabsAPI(tabId, frameId, <any> "removeCSS");
+		return super.callTabsAPI("removeCSS", tabId, frameId);
 	}
 }
 
 export class JsInjection extends Injection {
 	async inject (tabId: number, frameId: number) {
-		return super.callTabsAPI(tabId, frameId, "executeScript");
+		return super.callTabsAPI("executeScript", tabId, frameId);
 	}
 	async remove () {
 		// not supported

@@ -5,6 +5,7 @@
 import {Script} from "./Script";
 import {FRAME_ID_TOP} from "./background";
 import webNavigation from "./webNavigation";
+import {SectionInjectEvent} from "./SectionInjectEvent";
 
 class BadgeManager {
 	
@@ -13,8 +14,19 @@ class BadgeManager {
 	constructor () {
 		this.onNavigationCommitted = this.onNavigationCommitted.bind(this);
 		this.onTabRemoved = this.onTabRemoved.bind(this);
+		
 		webNavigation.onCommitted.addListener(this.onNavigationCommitted);
 		chrome.tabs.onRemoved.addListener(this.onTabRemoved);
+		window.addEventListener("sectioninject", (e: SectionInjectEvent) => {
+			if (e.detail.frameId === FRAME_ID_TOP) {
+				this.injectedScript(e.detail.section.script, e.detail.tabId);
+			}
+		});
+		window.addEventListener("sectionremove", (e: SectionInjectEvent) => {
+			if (e.detail.frameId === FRAME_ID_TOP) {
+				this.removedScript(e.detail.section.script, e.detail.tabId);
+			}
+		});
 	}
 	
 	private onNavigationCommitted (details: chrome.webNavigation.WebNavigationTransitionCallbackDetails) {
@@ -43,9 +55,6 @@ class BadgeManager {
 		}
 	}
 	
-	/**
-	 * adds a script to the list of scripts ran in the tab
-	 */
 	private tabAddScript (tabId: number, script: Script) {
 		const scripts = this.tabScripts.get(tabId);
 		if (scripts !== void 0) {
@@ -55,6 +64,13 @@ class BadgeManager {
 			set.add(script);
 			this.tabScripts.set(tabId, set);
 		}
+	}
+	private tabRemoveScript (tabId: number, script: Script) {
+		const scripts = this.tabScripts.get(tabId);
+		if (scripts === void 0) {
+			return;
+		}
+		scripts.delete(script);
 	}
 	
 	/**
@@ -84,17 +100,20 @@ class BadgeManager {
 		});
 	}
 	
-	/**
-	 * called from outside when a section of a script was injected in the top frame
-	 */
-	injectedScript (script: Script, tabId: number) {
+	private injectedScript (script: Script, tabId: number) {
 		if (this.tabHasScript(tabId, script)) {
 			return;
 		}
 		this.tabAddScript(tabId, script);
 		this.tabUpdateBadge(tabId);
 	}
+	private removedScript (script: Script, tabId: number) {
+		if (!this.tabHasScript(tabId, script)) {
+			return;
+		}
+		this.tabRemoveScript(tabId, script);
+		this.tabUpdateBadge(tabId);
+	}
 }
 
-export {BadgeManager};
-export default new BadgeManager();
+export default BadgeManager;

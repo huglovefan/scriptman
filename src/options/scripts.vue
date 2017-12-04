@@ -9,16 +9,17 @@
 		</div>
 		<div class="row">
 			<ul>
-				<div class="message" v-if="!scripts">
+				<div class="message" v-if="scripts === null">
 					loading...
 				</div>
-				<div class="message" v-if="scripts && !Object.keys(scripts).length">
+				<div class="message" v-if="scripts !== null && scriptCount() === 0">
 					no scripts found
 				</div>
-				<li v-if="scripts && Object.keys(scripts).length && shouldShowScript(script)" v-for="(script, id) in scripts">
+				<li v-for="(script, id) in scripts"
+					v-if="!tempHideAll && scripts !== null && scriptCount() !== 0 && shouldShowScript(script)">
 					<a v-bind:href="'editor.html?id=' + id">{{script.name}}</a>
 				</li>
-				<div class="message" v-if="scripts && Object.keys(scripts).length && !hasVisibleScripts">
+				<div class="message" v-if="scripts && scriptCount() !== 0 && !hasVisibleScripts">
 					no matching scripts
 				</div>
 			</ul>
@@ -31,9 +32,9 @@
 </template>
 
 <script lang="ts">
-	import scriptManager from "./scriptManagerRemote";
+	import ScriptManager from "./scriptManagerRemote";
 	import browser from "webextension-polyfill";
-	import {hrefNoHash, escapeRegExp} from "../misc";
+	import {hrefNoHash, escapeRegExp, entriesToObject} from "../misc";
 	import {Script} from "../background/Script";
 	import {createElement} from "./all";
 	export default {
@@ -54,6 +55,9 @@
 					url: "https://example.org/",
 				},
 				hasVisibleScripts: false,
+				// hide all scripts until the popup & active tab url have loaded,
+				// to prevent showing all and making the popup bigger than needed
+				tempHideAll: isPopup,
 			};
 		},
 		async created (this: any) {
@@ -67,16 +71,20 @@
 							this.search = hrefNoHash(url);
 							this.updateSearch();
 						}
+						this.tempHideAll = false;
 					});
 			}
-			scriptManager.getAll()
+			ScriptManager.getAll()
 				.then(entries => {
-					this.scripts =
-						[...entries]
-						.reduce((res, [id, init]) => Object.assign(res, {[id]: init}), {})
+					const scripts = entriesToObject([...entries]);
+					Object.freeze(scripts); // important, avoid leaking memory
+					this.scripts = scripts;
 				});
 		},
 		methods: {
+			scriptCount (this: any) {
+				return Object.keys(this.scripts).length;
+			},
 			searchTypeChanged (this: any) {
 				this.search = "";
 				this.updateSearch();

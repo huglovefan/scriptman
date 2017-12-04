@@ -1,9 +1,8 @@
 import {AnySection, Section} from "./Section";
-import {scriptManager} from "./ScriptManager";
+import ScriptManager from "./ScriptManager";
 import {URLCache} from "./URLCache";
 import {FRAME_ID_TOP} from "./background";
 import {FIREFOX} from "../browser";
-import BadgeManager from "./badgeManager";
 import webNavigation from "./webNavigation";
 
 export abstract class Connector {
@@ -33,31 +32,34 @@ export abstract class Connector {
 	}
 	
 	abstract disconnect (): void;
-	abstract startupInject (data: scriptManager.SnapshotData): void;
+	abstract startupInject (data: ScriptManager.SnapshotData): void;
 }
 
-// maybe this should be on Section?
-function commonStartupInject (section: AnySection, data: scriptManager.SnapshotData) {
+// todo: maybe this should be on Section? with a staticOnly flag?
+function commonStartupInject (section: AnySection, data: ScriptManager.SnapshotData) {
 	for (const tab of data.tabs) {
 		for (const frame of data.frames[tab.id!]) {
-			const injectedPromise = section.injectIfMatches(URLCache.get(tab.url!), tab.id!, frame.frameId);
-			if (frame.frameId !== FRAME_ID_TOP) {
-				continue;
-			}
-			injectedPromise.then(injected => {
-				if (!injected) {
-					return;
-				}
-				BadgeManager.injectedScript(section.script, tab.id!);
-			});
+			section.injectIfMatches(URLCache.get(tab.url!), tab.id!, frame.frameId);
 		}
 	}
 }
 
-//
-//
-//
+function testFrameBehavior (frameBehavior: Section.FrameBehavior, frameId: number) {
+	if (frameBehavior === "allFrames") {
+		return true;
+	}
+	if (frameBehavior === "topFrameOnly") {
+		return frameId === FRAME_ID_TOP;
+	}
+	if (frameBehavior === "subFramesOnly") {
+		return frameId !== FRAME_ID_TOP;
+	}
+	throw new Error("Bad frameBehavior value " + frameBehavior);
+}
 
+/**
+ * combines multiple connectors into one
+ */
 class Connector合体 extends Connector {
 	
 	private readonly connectors: ReadonlyArray<Connector>;
@@ -74,25 +76,21 @@ class Connector合体 extends Connector {
 		}
 	}
 	
-	startupInject (data: scriptManager.SnapshotData) {
+	startupInject (data: ScriptManager.SnapshotData) {
 		for (const connector of this.connectors) {
 			connector.startupInject(data);
 		}
 	}
 }
 
-//
-//
-//
-
 class WebNavigationConnector extends Connector {
 	
-	protected readonly frameBehavior: Section.FrameBehavior;
+	private readonly frameBehavior: Section.FrameBehavior;
 	
 	constructor (section: AnySection, frameBehavior = section.frameBehavior) {
 		super(section);
-		this.callback = this.callback.bind(this);
 		this.frameBehavior = frameBehavior;
+		this.callback = this.callback.bind(this);
 		const urlFilters: ReadonlyArray<chrome.events.UrlFilter> =
 			(this.section.matches.length === 0) ?
 				[{}] :
@@ -105,25 +103,21 @@ class WebNavigationConnector extends Connector {
 		);
 	}
 	
-	protected callback (details: chrome.webNavigation.WebNavigationFramedCallbackDetails) {
-		// we already know the url matches the matches
-		const injectedPromise = this.section.injectIfNotExcluded(URLCache.get(details.url), details.tabId, details.frameId);
-		if (details.frameId !== FRAME_ID_TOP) {
+	private async callback (details: chrome.webNavigation.WebNavigationFramedCallbackDetails) {
+		// if the frameBehavior is overridden, checking the one in Section isn't enough
+		if (this.frameBehavior !== this.section.frameBehavior &&
+			!testFrameBehavior(this.frameBehavior, details.frameId)) {
 			return;
 		}
-		injectedPromise.then(injected => {
-			if (!injected) {
-				return;
-			}
-			BadgeManager.injectedScript(this.section.script, details.tabId);
-		});
+		// we already know the url matches the matches, so test only excludes
+		await this.section.injectIfNotExcluded(URLCache.get(details.url), details.tabId, details.frameId);
 	}
 	
 	disconnect () {
 		webNavigation.onCommitted.removeListener(this.callback);
 	}
 	
-	startupInject (data: scriptManager.SnapshotData) {
+	startupInject (data: ScriptManager.SnapshotData) {
 		return commonStartupInject(this.section, data);
 	}
 }
@@ -133,37 +127,28 @@ class WebRequestConnector extends Connector {
 	constructor (section: AnySection, frameBehavior = section.frameBehavior) {
 		super(section);
 		this.callback = this.callback.bind(this);
-		const types =
-			(frameBehavior === "allFrames") ? ["main_frame", "sub_frame"] :
-			(frameBehavior === "topFrameOnly") ? ["main_frame"] :
-			(frameBehavior === "subFramesOnly") ? ["sub_frame"] : null;
-		if (types === null) {
-			throw new Error("Bad frameBehavior value " + frameBehavior);
+		const types = new Set(["main_frame", "sub_frame"]);
+		if (frameBehavior === "topFrameOnly") {
+			types.delete("sub_frame");
+		}
+		if (frameBehavior === "subFramesOnly") {
+			types.delete("main_frame");
 		}
 		chrome.webRequest.onResponseStarted.addListener(
 			this.callback,
-			{urls: ["<all_urls>"], types},
+			{urls: ["<all_urls>"], types: [...types]},
 		);
 	}
 	
-	callback (details: chrome.webRequest.WebResponseCacheDetails) {
-		const injectedPromise = this.section.injectIfMatches(URLCache.get(details.url), details.tabId, details.frameId);
-		if (details.frameId !== FRAME_ID_TOP) {
-			return;
-		}
-		injectedPromise.then(injected => {
-			if (!injected) {
-				return;
-			}
-			BadgeManager.injectedScript(this.section.script, details.tabId);
-		});
+	private async callback (details: chrome.webRequest.WebResponseCacheDetails) {
+		await this.section.injectIfMatches(URLCache.get(details.url), details.tabId, details.frameId);
 	}
 	
 	disconnect () {
 		chrome.webRequest.onResponseStarted.removeListener(this.callback);
 	}
 	
-	startupInject (data: scriptManager.SnapshotData) {
+	startupInject (data: ScriptManager.SnapshotData) {
 		return commonStartupInject(this.section, data);
 	}
 }

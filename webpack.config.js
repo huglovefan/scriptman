@@ -17,7 +17,7 @@ module.exports = {
 	entry: {
 		
 		// background
-		background: "./src/background/ScriptManager.ts",
+		background: "./src/background/background.ts",
 		
 		// options
 		scripts: "./src/options/scripts.ts",

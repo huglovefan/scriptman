@@ -87,7 +87,7 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 		return (
 			this.testFrameId(frameId) &&
 			this.test(url) &&
-			await this.injection.inject(tabId, frameId)
+			await this.inject(tabId, frameId)
 		);
 	}
 	
@@ -95,8 +95,32 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 		return (
 			this.testFrameId(frameId) &&
 			this.test(url, true) &&
-			await this.injection.inject(tabId, frameId)
+			await this.inject(tabId, frameId)
 		);
+	}
+	
+	private async inject (tabId: number, frameId: number) {
+		const injected = await this.injection.inject(tabId, frameId);
+		if (injected) {
+			window.dispatchEvent(new CustomEvent("sectioninject", {detail: {
+				section: this,
+				tabId,
+				frameId,
+			}}));
+		}
+		return injected;
+	}
+	
+	async remove (tabId: number, frameId: number) {
+		const removed = await this.injection.remove(tabId, frameId);
+		if (removed) {
+			window.dispatchEvent(new CustomEvent("sectionremove", {detail: {
+				section: this,
+				tabId,
+				frameId,
+			}}));
+		}
+		return removed;
 	}
 }
 

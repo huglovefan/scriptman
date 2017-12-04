@@ -43,10 +43,10 @@ export function createElement (tagName: string, properties: object | null = null
 
 export async function getScriptManager () {
 	const backgroundPage = <BackgroundPageWindow> await browser.runtime.getBackgroundPage();
-	if (!backgroundPage || !backgroundPage.scriptManager) {
+	if (!backgroundPage || !backgroundPage.ScriptManager) {
 		throw new Error("Couldn't get background page");
 	}
-	return backgroundPage.scriptManager;
+	return backgroundPage.ScriptManager;
 }
 
 
