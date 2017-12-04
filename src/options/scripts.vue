@@ -5,7 +5,7 @@
 				<option value="name">name contains</option>
 				<option value="url">matches url</option>
 			</select>
-			<input type="search" v-model="search" spellcheck="false" v-bind:placeholder="searchPlaceholders[searchType]" v-bind:disabled="!scripts" @input="updateSearch">
+			<input type="search" spellcheck="false" v-model="search" v-bind:placeholder="searchPlaceholders[searchType]" v-bind:disabled="!scripts" @input="updateSearch">
 		</div>
 		<div class="row">
 			<ul>
