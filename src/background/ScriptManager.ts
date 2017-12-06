@@ -7,7 +7,7 @@ import {Script, ScriptInit} from "./Script";
 import {AnySection} from "./Section";
 import {Connector} from "./Connector";
 import browser from "webextension-polyfill";
-import Deferred from "./Deferred";
+import Deferred from "../Deferred/Deferred";
 
 namespace ScriptManager {
 	

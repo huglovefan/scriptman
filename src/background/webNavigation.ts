@@ -2,7 +2,7 @@
 // automatic workaround for https://crbug.com/373579
 //
 
-import {CHROME} from "../browser";
+import {CHROME} from "../browser/browser";
 
 const fix = () => {
 	

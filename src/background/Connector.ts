@@ -1,9 +1,9 @@
 import {AnySection, Section} from "./Section";
 import ScriptManager from "./ScriptManager";
-import {URLCache} from "./URLCache";
 import {FRAME_ID_TOP} from "./background";
-import {FIREFOX} from "../browser";
+import {FIREFOX} from "../browser/browser";
 import webNavigation from "./webNavigation";
+import URLCache from "../URLCache/URLCache";
 
 export abstract class Connector {
 	

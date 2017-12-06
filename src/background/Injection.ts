@@ -1,11 +1,9 @@
 import browser from "webextension-polyfill";
 
 // https://crbug.com/632009
-// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/new
 type InjectDetails = chrome.tabs.InjectDetails & {cssOrigin?: "user" | "author"};
 
 // https://crbug.com/608854
-// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/new
 type TabsAPI = keyof typeof chrome.tabs | "removeCSS";
 
 export abstract class Injection {

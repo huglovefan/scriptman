@@ -1,5 +1,5 @@
 import {Section, AnySectionInit, AnySection} from "./Section";
-import {ReadonlyURL} from "./ReadonlyURL";
+import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
 
 export interface ScriptInit {
 	name: string;

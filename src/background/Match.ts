@@ -1,6 +1,6 @@
-import {ReadonlyURL} from "./ReadonlyURL";
-import {FIREFOX} from "../browser";
-import {hrefNoHash} from "../misc";
+import {FIREFOX} from "../browser/browser";
+import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import hrefNoHash from "../misc/hrefNoHash";
 
 //
 //

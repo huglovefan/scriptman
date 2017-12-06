@@ -1,9 +1,9 @@
 import {AnyMatchInit, AnyMatch, Match} from "./Match";
 import {Script} from "./Script";
 import {FRAME_ID_TOP} from "./background";
-import {ReadonlyURL} from "./ReadonlyURL";
-import {CHROME} from "../browser";
+import {CHROME} from "../browser/browser";
 import {Injection, CssInjection, JsInjection} from "./Injection";
+import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
 
 //
 //

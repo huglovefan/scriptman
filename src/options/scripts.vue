@@ -34,7 +34,9 @@
 <script lang="ts">
 	import ScriptManager from "./scriptManagerRemote";
 	import browser from "webextension-polyfill";
-	import {hrefNoHash, escapeRegExp, entriesToObject} from "../misc";
+	import hrefNoHash from "../misc/hrefNoHash";
+	import escapeRegExp from "../misc/escapeRegExp";
+	import entriesToObject from "../misc/entriesToObject";
 	import {Script} from "../background/Script";
 	import {createElement} from "./all";
 	
