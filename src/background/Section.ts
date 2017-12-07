@@ -102,7 +102,7 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 	private async inject (tabId: number, frameId: number) {
 		const injected = await this.injection.inject(tabId, frameId);
 		if (injected) {
-			window.dispatchEvent(new CustomEvent("sectioninject", {detail: {
+			window.dispatchEvent(new CustomEvent("sectioninjected", {detail: {
 				section: this,
 				tabId,
 				frameId,
@@ -114,7 +114,7 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 	async remove (tabId: number, frameId: number) {
 		const removed = await this.injection.remove(tabId, frameId);
 		if (removed) {
-			window.dispatchEvent(new CustomEvent("sectionremove", {detail: {
+			window.dispatchEvent(new CustomEvent("sectioninjectionremoved", {detail: {
 				section: this,
 				tabId,
 				frameId,

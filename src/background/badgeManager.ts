@@ -5,7 +5,6 @@
 import {Script} from "./Script";
 import {FRAME_ID_TOP} from "./background";
 import webNavigation from "./webNavigation";
-import {SectionInjectEvent} from "./SectionInjectEvent";
 
 class BadgeManager {
 	
@@ -17,12 +16,12 @@ class BadgeManager {
 		
 		webNavigation.onCommitted.addListener(this.onNavigationCommitted);
 		chrome.tabs.onRemoved.addListener(this.onTabRemoved);
-		window.addEventListener("sectioninject", (e: SectionInjectEvent) => {
+		window.addEventListener("sectioninjected", e => {
 			if (e.detail.frameId === FRAME_ID_TOP) {
 				this.injectedScript(e.detail.section.script, e.detail.tabId);
 			}
 		});
-		window.addEventListener("sectionremove", (e: SectionInjectEvent) => {
+		window.addEventListener("sectioninjectionremoved", e => {
 			if (e.detail.frameId === FRAME_ID_TOP) {
 				this.removedScript(e.detail.section.script, e.detail.tabId);
 			}
