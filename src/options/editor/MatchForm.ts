@@ -1,6 +1,6 @@
 import {AnyMatchInit} from "../../background/Match";
 import {select} from "../all";
-import {SectionFormElement, SectionForm} from "./SectionForm";
+import {SectionForm, SectionFormElement} from "./SectionForm";
 
 select; // not unused
 
@@ -15,7 +15,8 @@ export namespace MatchForm {
 	
 	// @ts-ignore
 	function clone () {
-		return <MatchFormElement> (<DocumentFragment> select("template#matchTemplate", document).content.cloneNode(true)).children[0];
+		return <MatchFormElement>
+			(<DocumentFragment> select("template#matchTemplate", document).content.cloneNode(true)).children[0];
 	}
 	
 	export function create (init?: AnyMatchInit) {

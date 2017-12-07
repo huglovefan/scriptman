@@ -1,10 +1,10 @@
-import {select, selectAll, eventRace} from "../all";
-import {AnySectionInit, JsSection, CssSection, Section} from "../../background/Section";
-import initTextarea from "./initTextarea";
 import {AnyMatchInit} from "../../background/Match";
-import {syntaxCheck} from "./syntaxCheck";
-import {MatchForm, MatchFormElement} from "./MatchForm";
+import {AnySectionInit, CssSection, JsSection, Section} from "../../background/Section";
+import {eventRace, select, selectAll} from "../all";
 import {editor, syntaxCheckOptions} from "../editormain";
+import initTextarea from "./initTextarea";
+import {MatchForm, MatchFormElement} from "./MatchForm";
+import {syntaxCheck} from "./syntaxCheck";
 
 select; // not unused
 
@@ -29,7 +29,8 @@ export namespace SectionForm {
 	
 	// @ts-ignore
 	function clone () {
-		return <SectionFormElement> (<DocumentFragment> select("template#sectionTemplate", document).content.cloneNode(true)).children[0];
+		return <SectionFormElement>
+			(<DocumentFragment> select("template#sectionTemplate", document).content.cloneNode(true)).children[0];
 	}
 	
 	export function getType (section: SectionFormElement) {
@@ -100,9 +101,9 @@ export namespace SectionForm {
 		select("select[name=sectionFrameBehavior]", section).value = init.frameBehavior;
 		select("textarea[name=sectionBody]", section).value = init.body;
 		select("div[name=matchArea]", section)
-			.append(...init.matches.map(i => MatchForm.create(i)));
+			.append(...init.matches.map((i) => MatchForm.create(i)));
 		select("div[name=excludeArea]", section)
-			.append(...init.excludes.map(i => MatchForm.create(i)));
+			.append(...init.excludes.map((i) => MatchForm.create(i)));
 		updateMatchCounts(section);
 	}
 	
@@ -111,6 +112,7 @@ export namespace SectionForm {
 		if (init === void 0 && editor!.from !== null) {
 			const frommatch: AnyMatchInit = {type: "domain", value: editor!.from!};
 			if (!hasMatchOrExclude(section, frommatch)) {
+				// tslint:disable-next-line:no-parameter-reassignment
 				init = frommatch;
 				selectAll = true;
 			}
@@ -126,6 +128,7 @@ export namespace SectionForm {
 		if (init === void 0 && editor!.from !== null) {
 			const frommatch: AnyMatchInit = {type: "domain", value: editor!.from!};
 			if (!hasMatchOrExclude(section, frommatch)) {
+				// tslint:disable-next-line:no-parameter-reassignment
 				init = frommatch;
 				selectAll = true;
 			}
@@ -156,19 +159,18 @@ export namespace SectionForm {
 	}
 	
 	export async function checkSyntax (section: SectionFormElement) {
-		switch (getType(section)) {
-			case "js":
-				const textarea = select("textarea[name=sectionBody]", section);
-				try {
-					const result = await syntaxCheck(textarea.value, syntaxCheckOptions);
-					if (result !== null) {
-						showSyntaxError(section, result.message, result.position);
-						return false;
-					}
-				} catch (error) {
-					console.error(error);
+		const type = getType(section);
+		if (type === "js") {
+			const textarea = select("textarea[name=sectionBody]", section);
+			try {
+				const result = await syntaxCheck(textarea.value, syntaxCheckOptions);
+				if (result !== null) {
+					showSyntaxError(section, result.message, result.position);
+					return false;
 				}
-				break;
+			} catch (error) {
+				console.error(error);
+			}
 		}
 	}
 	

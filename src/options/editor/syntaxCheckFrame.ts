@@ -1,4 +1,4 @@
-import {SyntaxCheckFunction, SyntaxCheckResult, SyntaxCheckOptions} from "./syntaxCheck";
+import {SyntaxCheckFunction, SyntaxCheckOptions, SyntaxCheckResult} from "./syntaxCheck";
 
 export interface SyntaxCheckWindow extends Window {
 	syntaxCheck?: SyntaxCheckFunction;
@@ -30,7 +30,7 @@ let offsets: {lineno: number, colno: number};
 // todo: maybe detecting strict mode is possible after all? i know more about parsing now
 
 (<SyntaxCheckWindow> window).syntaxCheck =
-async function syntaxCheck (code: string, options: SyntaxCheckOptions = {}) {
+async function syntaxCheck (originalCode: string, options: SyntaxCheckOptions = {}) {
 	
 	if (offsets === void 0) {
 		offsets = {lineno: 0, colno: 0};
@@ -43,7 +43,7 @@ async function syntaxCheck (code: string, options: SyntaxCheckOptions = {}) {
 		}
 	}
 	
-	const originalCode = code;
+	let code = originalCode;
 	
 	let addedLines = 0;
 	

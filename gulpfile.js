@@ -7,10 +7,17 @@ const uglify = require("gulp-uglify-es").default;
 const cleanCSS = require("gulp-clean-css");
 const exports2json = require("gulp-exports2json");
 const zip = require("gulp-zip");
+const tslint = require("gulp-tslint");
 
 const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
 console.assert(dev ^ prod);
+
+gulp.task("tslint", () => {
+	return gulp.src("./src/**/*.ts")
+		.pipe(tslint(require("./tslint.json")))
+		.pipe(tslint.report());
+});
 
 gulp.task("scripts", () => {
 	return gulp.src(["./src/**/*.ts", "./src/**/*.vue"])
@@ -67,7 +74,7 @@ gulp.task("watch", ["scripts", "static-scripts", "html", "css", "manifest", "zip
 });
 
 gulp.task("default", [
-	"scripts", "static-scripts", "html", "css", "manifest",
+	"tslint", "scripts", "static-scripts", "html", "css", "manifest",
 	...(dev ? ["watch"] : []),
 ]);
 

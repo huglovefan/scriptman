@@ -1,9 +1,9 @@
-import {AnyMatchInit, AnyMatch, Match} from "./Match";
-import {Script} from "./Script";
-import {FRAME_ID_TOP} from "./background";
 import {CHROME} from "../browser/browser";
-import {Injection, CssInjection, JsInjection} from "./Injection";
 import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {FRAME_ID_TOP} from "./background";
+import {CssInjection, Injection, JsInjection} from "./Injection";
+import {AnyMatch, AnyMatchInit, Match} from "./Match";
+import {Script} from "./Script";
 
 //
 //
@@ -78,8 +78,8 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 	 */
 	test (url: ReadonlyURL, checkExcludesOnly = false) {
 		return (
-			!this.excludes.some(exclude => exclude.test(url)) &&
-			(checkExcludesOnly || this.matches.length === 0 || this.matches.some(match => match.test(url)))
+			!this.excludes.some((exclude) => exclude.test(url)) &&
+			(checkExcludesOnly || this.matches.length === 0 || this.matches.some((match) => match.test(url)))
 		);
 	}
 	

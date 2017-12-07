@@ -1,6 +1,6 @@
 import ReadonlyURLSearchParams from "./ReadonlyURLSearchParams";
 
-export default interface ReadonlyURL {
+interface ReadonlyURL {
 	readonly hash: string;
 	readonly host: string;
 	readonly hostname: string;
@@ -13,5 +13,12 @@ export default interface ReadonlyURL {
 	readonly search: string;
 	readonly searchParams: ReadonlyURLSearchParams;
 	readonly username: string;
-	toString(): string;
+	toString (): string;
 }
+
+const ReadonlyURL: {
+	new (url: string, base?: string): ReadonlyURL;
+	prototype: ReadonlyURL;
+} = <any> URL;
+
+export default ReadonlyURL;

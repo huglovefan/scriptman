@@ -1,9 +1,9 @@
-import {AnySection, Section} from "./Section";
-import ScriptManager from "./ScriptManager";
-import {FRAME_ID_TOP} from "./background";
 import {FIREFOX} from "../browser/browser";
-import webNavigation from "./webNavigation";
 import URLCache from "../URLCache/URLCache";
+import {FRAME_ID_TOP} from "./background";
+import ScriptManager from "./ScriptManager";
+import {AnySection, Section} from "./Section";
+import webNavigation from "./webNavigation";
 
 export abstract class Connector {
 	
@@ -54,7 +54,7 @@ function testFrameBehavior (frameBehavior: Section.FrameBehavior, frameId: numbe
 	if (frameBehavior === "subFramesOnly") {
 		return frameId !== FRAME_ID_TOP;
 	}
-	throw new Error("Bad frameBehavior value " + frameBehavior);
+	throw new Error(`Bad frameBehavior value ${frameBehavior}`);
 }
 
 /**

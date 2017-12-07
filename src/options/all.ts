@@ -1,16 +1,14 @@
-import {BackgroundPageWindow} from "../background/background";
 import browser from "webextension-polyfill";
-
+import {BackgroundPageWindow} from "../background/background";
 
 export function select (selector: string, scope: NodeSelector) {
-	var result = scope.querySelector(selector);
+	const result = scope.querySelector(selector);
 	if (result === null) {
 		throw new Error("Element not found");
 	}
 	// require typed overloads to use
 	return <never> result;
 }
-
 
 export function selectAll
 	<T extends keyof HTMLElementTagNameMap>
@@ -23,10 +21,9 @@ export function selectAll
 	NodeListOf<HTMLElementTagNameMap[T]>;
 
 export function selectAll (selector: string, scope: NodeSelector) {
-	var result = scope.querySelectorAll(selector);
+	const result = scope.querySelectorAll(selector);
 	return <NodeListOf<HTMLElement>> result;
 }
-
 
 export function createElement
 	<T extends keyof HTMLElementTagNameMap>
@@ -40,7 +37,6 @@ export function createElement (tagName: string, properties: object | null = null
 	return element;
 }
 
-
 export async function getScriptManager () {
 	const backgroundPage = <BackgroundPageWindow> await browser.runtime.getBackgroundPage();
 	if (!backgroundPage || !backgroundPage.ScriptManager) {
@@ -48,7 +44,6 @@ export async function getScriptManager () {
 	}
 	return backgroundPage.ScriptManager;
 }
-
 
 export const documentLoaded = <T = void> (x?: T) =>
 	new Promise<T>(function (resolve) {
@@ -58,7 +53,6 @@ export const documentLoaded = <T = void> (x?: T) =>
 			document.addEventListener("DOMContentLoaded", () => resolve(x), {once: true});
 		}
 	});
-
 
 type EventRaceList =
 	[EventTarget, string] |
@@ -71,7 +65,7 @@ type EventRaceList =
 	[EventTarget, string, string, string, string, string, string, string, string];
 
 export function eventRace (...lists: EventRaceList[]) {
-	return new Promise<Event>(resolve => {
+	return new Promise<Event>((resolve) => {
 		const callback = (event: Event) => {
 			resolve(event);
 			for (const [target, ...events] of lists) {

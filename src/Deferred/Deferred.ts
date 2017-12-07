@@ -1,7 +1,7 @@
 export default class Deferred <T = void> extends Promise<T> {
 	
 	// without this, it throws:
-	// Promise resolve or reject function is not callable
+	// "Promise resolve or reject function is not callable"
 	// should investigate? i thought this was compatible with promises
 	static get [Symbol.species] () {
 		return Promise;
@@ -14,6 +14,7 @@ export default class Deferred <T = void> extends Promise<T> {
 	private done_: boolean;
 	
 	constructor () {
+		// tslint:disable-next-line:one-variable-per-declaration
 		let res_, rej_;
 		super((res, rej) => {
 			res_ = res;

@@ -1,5 +1,5 @@
-import {SyntaxCheckOptions} from "./editor/syntaxCheck";
 import Editor from "./editor/Editor";
+import {SyntaxCheckOptions} from "./editor/syntaxCheck";
 
 export const syntaxCheckOptions: SyntaxCheckOptions = {
 	strictMode: true,

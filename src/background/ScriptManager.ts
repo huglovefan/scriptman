@@ -2,12 +2,12 @@
 // the place for "misc stuff" meaning i'm too lazy to figure out where they should really go
 //
 
-import {BackgroundPageWindow} from "./background";
-import {Script, ScriptInit} from "./Script";
-import {AnySection} from "./Section";
-import {Connector} from "./Connector";
 import browser from "webextension-polyfill";
 import Deferred from "../Deferred/Deferred";
+import {BackgroundPageWindow} from "./background";
+import {Connector} from "./Connector";
+import {Script, ScriptInit} from "./Script";
+import {AnySection} from "./Section";
 
 namespace ScriptManager {
 	
@@ -85,7 +85,9 @@ namespace ScriptManager {
 	
 	export async function init () {
 		
-		if (loaded.done) return;
+		if (loaded.done) {
+			return;
+		}
 		
 		// inject scripts to existing tabs on browser startup
 		chrome.runtime.onStartup.addListener(async () => {
@@ -185,7 +187,7 @@ namespace ScriptManager {
 		
 		let script;
 		try {
-			 script = new Script(init);
+			script = new Script(init);
 		} catch (error) {
 			console.error(error);
 			return;

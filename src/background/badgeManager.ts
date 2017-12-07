@@ -2,8 +2,8 @@
 // singleton for managing the browser action badge for tabs
 //
 
-import {Script} from "./Script";
 import {FRAME_ID_TOP} from "./background";
+import {Script} from "./Script";
 import webNavigation from "./webNavigation";
 
 class BadgeManager {
@@ -16,12 +16,12 @@ class BadgeManager {
 		
 		webNavigation.onCommitted.addListener(this.onNavigationCommitted);
 		chrome.tabs.onRemoved.addListener(this.onTabRemoved);
-		window.addEventListener("sectioninjected", e => {
+		window.addEventListener("sectioninjected", (e) => {
 			if (e.detail.frameId === FRAME_ID_TOP) {
 				this.injectedScript(e.detail.section.script, e.detail.tabId);
 			}
 		});
-		window.addEventListener("sectioninjectionremoved", e => {
+		window.addEventListener("sectioninjectionremoved", (e) => {
 			if (e.detail.frameId === FRAME_ID_TOP) {
 				this.removedScript(e.detail.section.script, e.detail.tabId);
 			}

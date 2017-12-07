@@ -1,8 +1,8 @@
-import {ScriptInit} from "../../background/Script";
-import {select, documentLoaded, selectAll} from "../all";
-import {SectionForm, SectionFormElement} from "./SectionForm";
 import browser from "webextension-polyfill";
+import {ScriptInit} from "../../background/Script";
 import {AnySectionInit} from "../../background/Section";
+import {documentLoaded, select, selectAll} from "../all";
+import {SectionForm, SectionFormElement} from "./SectionForm";
 
 select; // not unused
 selectAll; // not unused
@@ -65,6 +65,7 @@ namespace Editor {
 			await this.initEnd();
 		}
 		
+		// tslint:disable-next-line:prefer-function-over-method
 		protected initStart () {
 		}
 		
@@ -72,10 +73,10 @@ namespace Editor {
 			select("button[name=addSection]", document).addEventListener("click", () => {
 				this.addSection();
 			});
-			select("button[name=saveScript]", document).addEventListener("click", event => {
+			select("button[name=saveScript]", document).addEventListener("click", (event) => {
 				this.saveButtonPressed(event);
 			});
-			window.addEventListener("beforeunload", event => {
+			window.addEventListener("beforeunload", (event) => {
 				
 				if (this.lastSavedValue === null) {
 					return;
@@ -113,6 +114,7 @@ namespace Editor {
 			return script;
 		}
 		
+		// tslint:disable-next-line:prefer-function-over-method
 		getValue () {
 			const result: Partial<ScriptInit> = {};
 			result.name = select("input[name=scriptName]", document).value;
@@ -124,6 +126,7 @@ namespace Editor {
 			return <ScriptInit> result;
 		}
 		
+		// tslint:disable-next-line:prefer-function-over-method
 		protected addSection (init?: AnySectionInit) {
 			const section = SectionForm.create(init);
 			select("div[name=sectionArea]", document).appendChild(section);
@@ -133,7 +136,8 @@ namespace Editor {
 	class EditorNew extends Editor {
 		
 		constructor (mode: "new", from: string | null) {
-			super(mode, Date.now().toString(36), from);
+			const base36 = 36;
+			super(mode, Date.now().toString(base36), from);
 			setTitle("new script");
 		}
 		

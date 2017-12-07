@@ -1,6 +1,6 @@
 interface ParentNode {
-	append (...nodes: (Node | string)[]): void
-	prepend (...nodes: (Node | string)[]): void
+	append (...nodes: (Node | string)[]): void;
+	prepend (...nodes: (Node | string)[]): void;
 }
 
 interface HTMLDetailsElement extends HTMLElement {

@@ -37,6 +37,7 @@ export class JsInjection extends Injection {
 	async inject (tabId: number, frameId: number) {
 		return super.callTabsAPI("executeScript", tabId, frameId);
 	}
+	// tslint:disable-next-line:prefer-function-over-method
 	async remove () {
 		// not supported
 		return false;

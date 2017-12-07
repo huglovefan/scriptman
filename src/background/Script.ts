@@ -1,5 +1,5 @@
-import {Section, AnySectionInit, AnySection} from "./Section";
 import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {AnySection, AnySectionInit, Section} from "./Section";
 
 export interface ScriptInit {
 	name: string;
@@ -16,10 +16,10 @@ export class Script {
 	constructor (init: ScriptInit) {
 		this.name = init.name;
 		this.enabled = init.enabled;
-		this.sections = init.sections.map(init => Section.from(init, this));
+		this.sections = init.sections.map((init) => Section.from(init, this));
 	}
 	
 	test (url: ReadonlyURL) {
-		return this.sections.some(section => section.test(url));
+		return this.sections.some((section) => section.test(url));
 	}
 }

@@ -39,6 +39,7 @@
 	import entriesToObject from "../misc/entriesToObject";
 	import {Script} from "../background/Script";
 	import {createElement} from "./all";
+	import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
 	
 	const isPopup = (() => {
 		const params = new URLSearchParams(location.search);
@@ -51,10 +52,10 @@
 	}
 	
 	const activeTabPromise =
-		isPopup && browser.tabs.query({active: true, currentWindow: true});
+		isPopup && <Promise<chrome.tabs.Tab[]>> browser.tabs.query({active: true, currentWindow: true});
 	const activeTabURLPromise =
-		activeTabPromise && activeTabPromise.then((tabs: chrome.tabs.Tab[]) => {
-			return new URL(tabs[0].url!);
+		activeTabPromise && activeTabPromise.then((tabs) => {
+			return new ReadonlyURL(tabs[0].url!);
 		});
 	
 	const allScriptsPromise =
@@ -81,9 +82,9 @@
 			};
 		},
 		async created (this: any) {
-			if (isPopup) {
-				activeTabURLPromise!
-					.then((url: URL) => {
+			if (isPopup && activeTabURLPromise) {
+				activeTabURLPromise
+					.then((url) => {
 						// todo: this should just be a check for "can scripts run here"
 						if (/^https?:$/.test(url.protocol)) {
 							this.search = hrefNoHash(url);

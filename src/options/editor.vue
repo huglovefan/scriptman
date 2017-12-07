@@ -24,7 +24,7 @@
 <script lang="ts">
 	export default {
 		created () {
-			import("./editormain.ts");
+			import("./editormain");
 		},
 	};
 </script>
