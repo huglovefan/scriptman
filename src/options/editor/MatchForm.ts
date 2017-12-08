@@ -8,12 +8,11 @@ export type MatchFormElement = HTMLDivElement;
 
 export namespace MatchForm {
 	
-	function select (selector: "template#matchTemplate", scope: Document): HTMLTemplateElement;
-	function select (selector: "select[name=matchType]", scope: MatchFormElement): HTMLSelectElement;
-	function select (selector: "input[name=matchValue]", scope: MatchFormElement): HTMLInputElement;
-	function select (selector: "button[name=removeMatch]", scope: MatchFormElement): HTMLButtonElement;
+	declare function select (selector: "template#matchTemplate", scope: Document): HTMLTemplateElement;
+	declare function select (selector: "select[name=matchType]", scope: MatchFormElement): HTMLSelectElement;
+	declare function select (selector: "input[name=matchValue]", scope: MatchFormElement): HTMLInputElement;
+	declare function select (selector: "button[name=removeMatch]", scope: MatchFormElement): HTMLButtonElement;
 	
-	// @ts-ignore
 	function clone () {
 		return <MatchFormElement>
 			(<DocumentFragment> select("template#matchTemplate", document).content.cloneNode(true)).children[0];

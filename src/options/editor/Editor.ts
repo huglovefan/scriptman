@@ -13,20 +13,18 @@ namespace Editor {
 		document.title = s + " - scriptman";
 	}
 	
-	function select (selector: "input[name=scriptName]", scope: Document): HTMLInputElement;
-	function select (selector: "input[name=scriptEnabled]", scope: Document): HTMLInputElement;
-	function select (selector: "button[name=addSection]", scope: Document): HTMLButtonElement;
-	function select (selector: "button[name=saveScript]", scope: Document): HTMLButtonElement;
-	function select (selector: "button[name=deleteScript]", scope: Document): HTMLButtonElement;
-	function select (selector: "div[name=sectionArea]", scope: Document): HTMLDivElement;
+	declare function select (selector: "input[name=scriptName]", scope: Document): HTMLInputElement;
+	declare function select (selector: "input[name=scriptEnabled]", scope: Document): HTMLInputElement;
+	declare function select (selector: "button[name=addSection]", scope: Document): HTMLButtonElement;
+	declare function select (selector: "button[name=saveScript]", scope: Document): HTMLButtonElement;
+	declare function select (selector: "button[name=deleteScript]", scope: Document): HTMLButtonElement;
+	declare function select (selector: "div[name=sectionArea]", scope: Document): HTMLDivElement;
 	
-	function select (selector: "details.matchesRow", scope: Document): HTMLDetailsElement;
-	// @ts-ignore
-	function select (selector: "fieldset.section", scope: Document): SectionFormElement;
+	declare function select (selector: "details.matchesRow", scope: Document): HTMLDetailsElement;
+	declare function select (selector: "fieldset.section", scope: Document): SectionFormElement;
 	
-	function selectAll (selector: string, scope: NodeSelector): HTMLElement[];
-	// @ts-ignore
-	function selectAll (selector: "fieldset.section", scope: Document): SectionFormElement[];
+	declare function selectAll (selector: string, scope: NodeSelector): HTMLElement[];
+	declare function selectAll (selector: "fieldset.section", scope: Document): SectionFormElement[];
 	
 	export abstract class Editor {
 		

@@ -12,22 +12,21 @@ export type SectionFormElement = HTMLFieldSetElement;
 
 export namespace SectionForm {
 	
-	function select (selector: "template#sectionTemplate", scope: Document): HTMLTemplateElement;
-	function select (selector: "select[name=sectionType]", scope: SectionFormElement): HTMLSelectElement;
-	function select (selector: "select[name=sectionRunAt]", scope: SectionFormElement): HTMLSelectElement;
-	function select (selector: "select[name=sectionContext]", scope: SectionFormElement): HTMLSelectElement;
-	function select (selector: "select[name=sectionCssOrigin]", scope: SectionFormElement): HTMLSelectElement;
-	function select (selector: "select[name=sectionFrameBehavior]", scope: SectionFormElement): HTMLSelectElement;
-	function select (selector: "textarea[name=sectionBody]", scope: SectionFormElement): HTMLTextAreaElement;
-	function select (selector: "button[name=addMatch]", scope: SectionFormElement): HTMLButtonElement;
-	function select (selector: "button[name=removeSection]", scope: SectionFormElement): HTMLButtonElement;
-	function select (selector: "div[name=matchArea]", scope: SectionFormElement): HTMLDivElement;
-	function select (selector: "summary.matches", scope: SectionFormElement): HTMLElement;
-	function select (selector: "button[name=addExclude]", scope: SectionFormElement): HTMLButtonElement;
-	function select (selector: "div[name=excludeArea]", scope: SectionFormElement): HTMLDivElement;
-	function select (selector: "summary.excludes", scope: SectionFormElement): HTMLElement;
+	declare function select (selector: "template#sectionTemplate", scope: Document): HTMLTemplateElement;
+	declare function select (selector: "select[name=sectionType]", scope: SectionFormElement): HTMLSelectElement;
+	declare function select (selector: "select[name=sectionRunAt]", scope: SectionFormElement): HTMLSelectElement;
+	declare function select (selector: "select[name=sectionContext]", scope: SectionFormElement): HTMLSelectElement;
+	declare function select (selector: "select[name=sectionCssOrigin]", scope: SectionFormElement): HTMLSelectElement;
+	declare function select (selector: "select[name=sectionFrameBehavior]", scope: SectionFormElement): HTMLSelectElement;
+	declare function select (selector: "textarea[name=sectionBody]", scope: SectionFormElement): HTMLTextAreaElement;
+	declare function select (selector: "button[name=addMatch]", scope: SectionFormElement): HTMLButtonElement;
+	declare function select (selector: "button[name=removeSection]", scope: SectionFormElement): HTMLButtonElement;
+	declare function select (selector: "div[name=matchArea]", scope: SectionFormElement): HTMLDivElement;
+	declare function select (selector: "summary.matches", scope: SectionFormElement): HTMLElement;
+	declare function select (selector: "button[name=addExclude]", scope: SectionFormElement): HTMLButtonElement;
+	declare function select (selector: "div[name=excludeArea]", scope: SectionFormElement): HTMLDivElement;
+	declare function select (selector: "summary.excludes", scope: SectionFormElement): HTMLElement;
 	
-	// @ts-ignore
 	function clone () {
 		return <SectionFormElement>
 			(<DocumentFragment> select("template#sectionTemplate", document).content.cloneNode(true)).children[0];
