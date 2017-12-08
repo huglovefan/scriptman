@@ -70,7 +70,6 @@ gulp.task("watch", ["scripts", "static-scripts", "html", "css", "manifest", "zip
 	gulp.watch("./static/**/*.html", ["html"]);
 	gulp.watch("./static/**/*.css", ["css"]);
 	gulp.watch("./static/manifest.js", ["manifest"]);
-	gulp.watch("./dist/extension/**/*", ["zip"]);
 });
 
 gulp.task("default", [
