@@ -8,11 +8,11 @@ type TabsAPI = keyof typeof chrome.tabs | "removeCSS";
 
 export abstract class Injection {
 	protected readonly injectDetails: InjectDetails;
-	constructor (injectDetails: Readonly<InjectDetails>) {
+	public constructor (injectDetails: Readonly<InjectDetails>) {
 		this.injectDetails = injectDetails;
 	}
-	abstract inject (tabId: number, frameId: number): Promise<boolean>;
-	abstract remove (tabId: number, frameId: number): Promise<boolean>;
+	public abstract inject (tabId: number, frameId: number): Promise<boolean>;
+	public abstract remove (tabId: number, frameId: number): Promise<boolean>;
 	protected async callTabsAPI (method: TabsAPI, tabId: number, frameId: number) {
 		try {
 			this.injectDetails.frameId = frameId;
@@ -25,20 +25,20 @@ export abstract class Injection {
 }
 
 export class CssInjection extends Injection {
-	async inject (tabId: number, frameId: number) {
+	public async inject (tabId: number, frameId: number) {
 		return super.callTabsAPI("insertCSS", tabId, frameId);
 	}
-	async remove (tabId: number, frameId: number) {
+	public async remove (tabId: number, frameId: number) {
 		return super.callTabsAPI("removeCSS", tabId, frameId);
 	}
 }
 
 export class JsInjection extends Injection {
-	async inject (tabId: number, frameId: number) {
+	public async inject (tabId: number, frameId: number) {
 		return super.callTabsAPI("executeScript", tabId, frameId);
 	}
 	// tslint:disable-next-line:prefer-function-over-method
-	async remove () {
+	public async remove () {
 		// not supported
 		return false;
 	}

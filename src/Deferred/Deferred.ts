@@ -3,7 +3,7 @@ export default class Deferred <T = void> extends Promise<T> {
 	// without this, it throws:
 	// "Promise resolve or reject function is not callable"
 	// should investigate? i thought this was compatible with promises
-	static get [Symbol.species] () {
+	public static get [Symbol.species] () {
 		return Promise;
 	}
 	
@@ -13,7 +13,7 @@ export default class Deferred <T = void> extends Promise<T> {
 	private reject_: (reason?: any) => void;
 	private done_: boolean;
 	
-	constructor () {
+	public constructor () {
 		// tslint:disable-next-line:one-variable-per-declaration
 		let res_, rej_;
 		super((res, rej) => {
@@ -27,7 +27,7 @@ export default class Deferred <T = void> extends Promise<T> {
 		this.done_ = false;
 	}
 	
-	resolve (value?: T | PromiseLike<T> | undefined): Promise<T> {
+	public resolve (value?: T | PromiseLike<T> | undefined): Promise<T> {
 		if (this.done_) {
 			// @ts-ignore cryptic error
 			return this.then(() => value);
@@ -40,7 +40,7 @@ export default class Deferred <T = void> extends Promise<T> {
 		}
 	}
 	
-	reject (reason: any): Promise<T> {
+	public reject (reason: any): Promise<T> {
 		if (this.done_) {
 			return this.then(() => {
 				throw reason;
@@ -54,7 +54,7 @@ export default class Deferred <T = void> extends Promise<T> {
 		}
 	}
 	
-	get done () {
+	public get done () {
 		return this.done_;
 	}
 }

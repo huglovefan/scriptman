@@ -40,7 +40,7 @@ export namespace Section {
 
 export abstract class Section <TType extends keyof SectionClassMap> {
 	
-	static from (init: AnySectionInit, script: Script): AnySection {
+	public static from (init: AnySectionInit, script: Script): AnySection {
 		switch (init.type) {
 			case "css":
 				return new CssSection(init, script);
@@ -51,21 +51,21 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 		}
 	}
 	
-	readonly script: Script;
-	readonly frameBehavior: Section.FrameBehavior;
-	readonly matches: ReadonlyArray<AnyMatch>;
+	public readonly script: Script;
+	public readonly frameBehavior: Section.FrameBehavior;
+	public readonly matches: ReadonlyArray<AnyMatch>;
 	protected readonly excludes: ReadonlyArray<AnyMatch>;
 	
-	abstract readonly injection: Injection;
+	public abstract readonly injection: Injection;
 	
-	constructor (init: SectionInit<TType>, script: Script) {
+	public constructor (init: SectionInit<TType>, script: Script) {
 		this.script = script;
 		this.frameBehavior = init.frameBehavior;
 		this.matches = init.matches.map(Match.from);
 		this.excludes = init.excludes.map(Match.from);
 	}
 	
-	testFrameId (frameId: number) {
+	public testFrameId (frameId: number) {
 		return (
 			this.frameBehavior === "topFrameOnly" ? frameId === FRAME_ID_TOP :
 			this.frameBehavior === "subFramesOnly" ? frameId !== FRAME_ID_TOP :
@@ -76,14 +76,14 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 	/**
 	 * @returns true if the section should be injected for the URL
 	 */
-	test (url: ReadonlyURL, checkExcludesOnly = false) {
+	public test (url: ReadonlyURL, checkExcludesOnly = false) {
 		return (
 			!this.excludes.some((exclude) => exclude.test(url)) &&
 			(checkExcludesOnly || this.matches.length === 0 || this.matches.some((match) => match.test(url)))
 		);
 	}
 	
-	async injectIfMatches (url: ReadonlyURL, tabId: number, frameId: number) {
+	public async injectIfMatches (url: ReadonlyURL, tabId: number, frameId: number) {
 		return (
 			this.testFrameId(frameId) &&
 			this.test(url) &&
@@ -91,7 +91,7 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 		);
 	}
 	
-	async injectIfNotExcluded (url: ReadonlyURL, tabId: number, frameId: number) {
+	public async injectIfNotExcluded (url: ReadonlyURL, tabId: number, frameId: number) {
 		return (
 			this.testFrameId(frameId) &&
 			this.test(url, true) &&
@@ -111,7 +111,7 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 		return injected;
 	}
 	
-	async remove (tabId: number, frameId: number) {
+	public async remove (tabId: number, frameId: number) {
 		const removed = await this.injection.remove(tabId, frameId);
 		if (removed) {
 			window.dispatchEvent(new CustomEvent("sectioninjectionremoved", {detail: {
@@ -141,9 +141,9 @@ interface JsSectionInit extends SectionInit<"js"> {
 
 class JsSection extends Section<"js"> {
 	
-	readonly injection: Injection;
+	public readonly injection: Injection;
 	
-	constructor (init: JsSectionInit, script: Script) {
+	public constructor (init: JsSectionInit, script: Script) {
 		super(init, script);
 		this.injection = new JsInjection({
 			allFrames: false,
@@ -198,9 +198,9 @@ interface CssSectionInit extends SectionInit<"css"> {
 
 class CssSection extends Section<"css"> {
 	
-	readonly injection: Injection;
+	public readonly injection: Injection;
 	
-	constructor (init: CssSectionInit, script: Script) {
+	public constructor (init: CssSectionInit, script: Script) {
 		super(init, script);
 		this.injection = new CssInjection({
 			// firefox errors if this is set to true:

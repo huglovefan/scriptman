@@ -2,7 +2,7 @@ import escapeRegExp from "../misc/escapeRegExp";
 
 export default class VersionNumber {
 	
-	static parseUserAgent (product: string, userAgent = navigator.userAgent) {
+	public static parseUserAgent (product: string, userAgent = navigator.userAgent) {
 		const pattern = RegExp(
 			"(?:^| )" + escapeRegExp(product) + "\\/([^ ]+)"
 		);
@@ -13,13 +13,13 @@ export default class VersionNumber {
 		return VersionNumber.fromString(match[1]);
 	}
 	
-	static fromString (s: string) {
+	public static fromString (s: string) {
 		return new VersionNumber(s.split(".").map(Number));
 	}
 	
 	private numbers: number[];
 	
-	constructor (numbers: number[]) {
+	public constructor (numbers: number[]) {
 		this.numbers = numbers;
 	}
 	
@@ -32,11 +32,11 @@ export default class VersionNumber {
 		return 0;
 	}
 	
-	isNewerThan (numbers: number[]) {
+	public isNewerThan (numbers: number[]) {
 		return this.compare(numbers) === 1;
 	}
 	
-	isOlderThan (numbers: number[]) {
+	public isOlderThan (numbers: number[]) {
 		return this.compare(numbers) === -1;
 	}
 }

@@ -9,11 +9,11 @@ const fix = () => {
 	// stolen from mozilla
 	class DefaultWeakMap <K extends object, V> extends WeakMap<K, V> {
 		private readonly callback: (key: K) => V;
-		constructor (callback: DefaultWeakMap<K, V>["callback"]) {
+		public constructor (callback: DefaultWeakMap<K, V>["callback"]) {
 			super();
 			this.callback = callback;
 		}
-		get (key: K) {
+		public get (key: K) {
 			if (super.has(key)) {
 				return super.get(key)!;
 			}

@@ -10,7 +10,7 @@ class BadgeManager {
 	
 	private readonly tabScripts = new Map<number, Set<Script>>();
 	
-	constructor () {
+	public constructor () {
 		this.onNavigationCommitted = this.onNavigationCommitted.bind(this);
 		this.onTabRemoved = this.onTabRemoved.bind(this);
 		

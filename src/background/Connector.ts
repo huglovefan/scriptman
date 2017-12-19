@@ -7,7 +7,7 @@ import webNavigation from "./webNavigation";
 
 export abstract class Connector {
 	
-	static for (section: AnySection): Connector {
+	public static for (section: AnySection): Connector {
 		// https://github.com/greasemonkey/greasemonkey/issues/2574
 		if (FIREFOX) {
 			const connectors = [
@@ -25,14 +25,14 @@ export abstract class Connector {
 		return new WebNavigationConnector(section);
 	}
 	
-	readonly section: AnySection;
+	public readonly section: AnySection;
 	
-	constructor (section: AnySection) {
+	public constructor (section: AnySection) {
 		this.section = section;
 	}
 	
-	abstract disconnect (): void;
-	abstract startupInject (data: ScriptManager.SnapshotData): void;
+	public abstract disconnect (): void;
+	public abstract startupInject (data: ScriptManager.SnapshotData): void;
 }
 
 // todo: maybe this should be on Section? with a staticOnly flag?
@@ -64,19 +64,19 @@ class Connector合体 extends Connector {
 	
 	private readonly connectors: ReadonlyArray<Connector>;
 	
-	constructor (connectors: ReadonlyArray<Connector>) {
+	public constructor (connectors: ReadonlyArray<Connector>) {
 		console.assert(connectors.length !== 0);
 		super(connectors[0].section);
 		this.connectors = connectors;
 	}
 	
-	disconnect () {
+	public disconnect () {
 		for (const connector of this.connectors) {
 			connector.disconnect();
 		}
 	}
 	
-	startupInject (data: ScriptManager.SnapshotData) {
+	public startupInject (data: ScriptManager.SnapshotData) {
 		for (const connector of this.connectors) {
 			connector.startupInject(data);
 		}
@@ -87,7 +87,7 @@ class WebNavigationConnector extends Connector {
 	
 	private readonly frameBehavior: Section.FrameBehavior;
 	
-	constructor (section: AnySection, frameBehavior = section.frameBehavior) {
+	public constructor (section: AnySection, frameBehavior = section.frameBehavior) {
 		super(section);
 		this.frameBehavior = frameBehavior;
 		this.callback = this.callback.bind(this);
@@ -113,18 +113,18 @@ class WebNavigationConnector extends Connector {
 		await this.section.injectIfNotExcluded(URLCache.get(details.url), details.tabId, details.frameId);
 	}
 	
-	disconnect () {
+	public disconnect () {
 		webNavigation.onCommitted.removeListener(this.callback);
 	}
 	
-	startupInject (data: ScriptManager.SnapshotData) {
+	public startupInject (data: ScriptManager.SnapshotData) {
 		return commonStartupInject(this.section, data);
 	}
 }
 
 class WebRequestConnector extends Connector {
 	
-	constructor (section: AnySection, frameBehavior = section.frameBehavior) {
+	public constructor (section: AnySection, frameBehavior = section.frameBehavior) {
 		super(section);
 		this.callback = this.callback.bind(this);
 		const types = new Set(["main_frame", "sub_frame"]);
@@ -144,11 +144,11 @@ class WebRequestConnector extends Connector {
 		await this.section.injectIfMatches(URLCache.get(details.url), details.tabId, details.frameId);
 	}
 	
-	disconnect () {
+	public disconnect () {
 		chrome.webRequest.onResponseStarted.removeListener(this.callback);
 	}
 	
-	startupInject (data: ScriptManager.SnapshotData) {
+	public startupInject (data: ScriptManager.SnapshotData) {
 		return commonStartupInject(this.section, data);
 	}
 }

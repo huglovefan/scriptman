@@ -28,7 +28,7 @@ namespace Editor {
 	
 	export abstract class Editor {
 		
-		static init () {
+		public static init () {
 			const params = new URLSearchParams(location.search);
 			const mode = params.get("mode");
 			const id = params.get("id");
@@ -43,13 +43,13 @@ namespace Editor {
 			}
 		}
 		
-		readonly mode: string;
-		readonly id: string;
-		readonly from: string | null;
+		public readonly mode: string;
+		public readonly id: string;
+		public readonly from: string | null;
 		
 		protected lastSavedValue: ScriptInit | null;
 		
-		constructor (mode: string, id: string, from: string | null) {
+		public constructor (mode: string, id: string, from: string | null) {
 			this.mode = mode;
 			this.id = id;
 			this.from = from;
@@ -113,7 +113,7 @@ namespace Editor {
 		}
 		
 		// tslint:disable-next-line:prefer-function-over-method
-		getValue () {
+		public getValue () {
 			const result: Partial<ScriptInit> = {};
 			result.name = select("input[name=scriptName]", document).value;
 			result.enabled = select("input[name=scriptEnabled]", document).checked;
@@ -133,7 +133,7 @@ namespace Editor {
 	
 	class EditorNew extends Editor {
 		
-		constructor (mode: "new", from: string | null) {
+		public constructor (mode: "new", from: string | null) {
 			const base36 = 36;
 			super(mode, Date.now().toString(base36), from);
 			setTitle("new script");
@@ -163,9 +163,9 @@ namespace Editor {
 	
 	class EditorEdit extends Editor {
 		
-		scriptName: string;
+		public scriptName: string;
 		
-		constructor (mode: "edit", id: string, from: string | null) {
+		public constructor (mode: "edit", id: string, from: string | null) {
 			super(mode, id, from);
 			this.scriptName = ""; // "no initializer & not definitely assigned in constructor"
 			this.updateName(`script #${id}`);

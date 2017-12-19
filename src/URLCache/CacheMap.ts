@@ -9,7 +9,7 @@ export default abstract class CacheMap <K, V> {
 	protected maxSize = 10;
 	protected timeToLive = 10000;
 	
-	get (key: K) {
+	public get (key: K) {
 		if (this.map.has(key)) {
 			const entry = this.map.get(key)!;
 			clearTimeout(entry.timeout);

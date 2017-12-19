@@ -1,6 +1,7 @@
 {
 	"rules": {
 		"ban-comma-operator": true,
+		"member-access": [true, "check-accessor", "check-constructor"],
 		"no-empty-interface": true,
 		"no-import-side-effect": true,
 		"no-inferrable-types": true,
