@@ -3,7 +3,7 @@
 //
 
 import browser from "webextension-polyfill";
-import Deferred from "../Deferred/Deferred";
+import Deferred from "../misc/Deferred";
 import {BackgroundPageWindow} from "./background";
 import {Connector} from "./Connector";
 import {Script, ScriptInit} from "./Script";
