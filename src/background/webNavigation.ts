@@ -3,27 +3,11 @@
 //
 
 import {CHROME} from "../browser/browser";
+import DefaultWeakMap from "../misc/DefaultWeakMap";
 
 const fix = () => {
 	
-	// stolen from mozilla
-	class DefaultWeakMap <K extends object, V> extends WeakMap<K, V> {
-		private readonly callback: (key: K) => V;
-		public constructor (callback: DefaultWeakMap<K, V>["callback"]) {
-			super();
-			this.callback = callback;
-		}
-		public get (key: K) {
-			if (super.has(key)) {
-				return super.get(key)!;
-			}
-			const item = <V> this.callback.call(null, key);
-			super.set(key, item);
-			return item;
-		}
-	}
-	
-	const wrapCallback = <T extends Function> (callback: T) => {
+	const wrapCallback = <T extends (...args: any[]) => any> (callback: T) => {
 		let lastTimeStamp = 0;
 		return function (details: {timeStamp: number}) {
 			if (details.timeStamp === lastTimeStamp) {

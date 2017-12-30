@@ -1,13 +1,28 @@
 "use strict";
 
+/**
+ * @param {string} selector
+ * @param {NodeSelector} [startNode]
+ * @returns {Element | null}
+ */
 function $ (selector, startNode = document) {
     return startNode.querySelector(selector);
 }
 
+/**
+ * @param {string} selector
+ * @param {NodeSelector} [startNode]
+ * @returns {Element[]}
+ */
 function $$ (selector, startNode = document) {
     return [...startNode.querySelectorAll(selector)];
 }
 
+/**
+ * @param {string} xpath
+ * @param {Node} [startNode]
+ * @returns {number | string | boolean | Node[] | Node}
+ */
 function $x (xpath, startNode = document) {
     const result = document.evaluate(xpath, startNode, null, XPathResult.ANY_TYPE, null);
     switch (result.resultType) {
@@ -38,4 +53,15 @@ function $x (xpath, startNode = document) {
         default:
             throw new Error("Invalid XPathResult type " + result.resultType);
     }
+}
+
+/**
+ * @param {string} cssText
+ * @returns {HTMLStyleElement}
+ */
+function GM_addStyle (cssText) {
+    const style = document.createElement("style");
+    style.textContent = cssText;
+    document.documentElement.appendChild(style);
+    return style;
 }
