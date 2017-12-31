@@ -1,5 +1,7 @@
 "use strict";
 
+// https://github.com/mishoo/UglifyJS2/tree/harmony#api-reference
+
 module.exports = {
 	compress: {
 		ecma: 8,

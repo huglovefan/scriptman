@@ -13,6 +13,8 @@ const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
 console.assert(dev ^ prod);
 
+// https://github.com/gulpjs/gulp/blob/master/docs/API.md
+
 gulp.task("tslint", () => {
 	return gulp.src("./src/**/*.ts")
 		.pipe(tslint(require("./tslint.json")))

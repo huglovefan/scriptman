@@ -1,4 +1,16 @@
 {
+  "name": "scriptman",
+  "version": "0.1.6",
+  "description": "custom js/css manager for humans",
+  "homepage": "https://github.com/epicgirl1998/scriptman",
+  "bugs": {
+    "url": "https://github.com/epicgirl1998/scriptman/issues",
+    "email": "huglovefan1998@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/epicgirl1998/scriptman.git"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production gulp",
     "build-dev": "cross-env NODE_ENV=development gulp",

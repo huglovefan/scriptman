@@ -9,9 +9,7 @@ const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
 console.assert(dev ^ prod);
 
-// https://github.com/webpack/webpack/issues/4453
-
-const uglifyOptions = require("./uglifyOptions.js");
+// https://webpack.js.org/configuration/
 
 module.exports = {
 	entry: {
@@ -80,7 +78,7 @@ module.exports = {
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.AggressiveMergingPlugin(),
 		...(prod ? [new webpack.optimize.ModuleConcatenationPlugin()] : []),
-		...(prod ? [new UglifyJsPlugin({uglifyOptions})] : []),
+		...(prod ? [new UglifyJsPlugin({uglifyOptions: require("./uglifyOptions.js")})] : []),
 	],
 	output: {
 		path: path.resolve(__dirname, "dist/extension/js/"),

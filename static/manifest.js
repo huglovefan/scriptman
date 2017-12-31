@@ -1,15 +1,24 @@
 "use strict";
 
+const npmPackage = require("../package.json");
+
+console.assert(npmPackage);
+
 const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
 console.assert(dev ^ prod);
 
+const nameSuffix = (dev) ? " (dev)" : "";
+
+// https://developer.chrome.com/extensions/manifest
+// https://developer.mozilla.org/en-US/Add-ons/WebExtensions/manifest.json
+
 module.exports = {
 	manifest_version: 2,
-	name: "scriptman" + (dev ? " (dev)" : ""),
-	version: "0.1.6",
-	description: "custom js/css manager for humans",
-	homepage_url: "https://github.com/epicgirl1998/scriptman",
+	name: npmPackage.name + nameSuffix,
+	version: npmPackage.version,
+	description: npmPackage.description,
+	homepage_url: npmPackage.homepage,
 	options_ui: {
 		page: "options/scripts.html",
 		open_in_tab: true,
