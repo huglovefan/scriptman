@@ -12,9 +12,9 @@
     "url": "https://github.com/epicgirl1998/scriptman.git"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production gulp",
-    "build-dev": "cross-env NODE_ENV=development gulp",
-    "zip": "cross-env NODE_ENV=production gulp zip"
+    "build": "cross-env NODE_ENV=production gulp --gulpfile ./scripts/gulpfile.js",
+    "build-dev": "cross-env NODE_ENV=development gulp --gulpfile ./scripts/gulpfile.js",
+    "zip": "cross-env NODE_ENV=production gulp --gulpfile ./scripts/gulpfile.js zip"
   },
   "dependencies": {
     "@types/chrome": "^0.0.58",

@@ -14,13 +14,13 @@ const sequence = require("gulp-sequence");
 const fs = require("fs");
 const requireUncached = require("require-uncached");
 
-const {dev, prod} = require("./scripts/modules/env");
+const {dev, prod} = require("./modules/env");
 
 // https://github.com/gulpjs/gulp/blob/master/docs/API.md
 
 gulp.task("tslint", () => {
-	return gulp.src("./src/**/*.ts")
-		.pipe(tslint(requireUncached("./tslint.json")))
+	return gulp.src("../src/**/*.ts")
+		.pipe(tslint(requireUncached("../src/tslint.json")))
 		.pipe(tslint.report());
 });
 
@@ -35,44 +35,44 @@ gulp.task("scripts", (callback) => {
 });
 
 gulp.task("static-scripts", () => {
-	return gulp.src(["!./static/manifest.js", "./static/**/*.js"])
+	return gulp.src(["!./static/manifest.js", "../static/**/*.js"])
 		.pipe(uglify(requireUncached("./uglifyOptions.js")))
-		.pipe(gulp.dest("./dist/extension/"));
+		.pipe(gulp.dest("../dist/extension/"));
 });
 
 gulp.task("html", () => {
-	return gulp.src("./static/**/*.html")
+	return gulp.src("../static/**/*.html")
 		.pipe(htmlmin({
 			collapseWhitespace: prod,
 			minifyCSS: prod,
 		}))
-		.pipe(gulp.dest("./dist/extension/"));
+		.pipe(gulp.dest("../dist/extension/"));
 });
 
 gulp.task("css", () => {
-	return gulp.src("./static/**/*.css")
+	return gulp.src("../static/**/*.css")
 		.pipe(cleanCSS({
 			...(!prod ? {format: "beautify"} : {}),
 		}))
-		.pipe(gulp.dest("./dist/extension/"));
+		.pipe(gulp.dest("../dist/extension/"));
 });
 
 gulp.task("manifest", () => {
-	return gulp.src("./static/manifest.js")
+	return gulp.src("../static/manifest.js")
 		.pipe(exports2json())
-		.pipe(gulp.dest("./dist/extension/"));
+		.pipe(gulp.dest("../dist/extension/"));
 });
 
 gulp.task("watch", () => {
 	gulp.watch([
 		"./webpack.config.js",
 		"./uglifyOptions.js",
-		"./src/**/*.ts", "./src/**/*.vue"
+		"../src/**/*.ts", "../src/**/*.vue"
 	], ["scripts"]);
-	gulp.watch(["!./static/manifest.js", "./static/**/*.js"], ["static-scripts"]);
-	gulp.watch("./static/**/*.html", ["html"]);
-	gulp.watch("./static/**/*.css", ["css"]);
-	gulp.watch("./static/manifest.js", ["manifest"]);
+	gulp.watch(["!./static/manifest.js", "../static/**/*.js"], ["static-scripts"]);
+	gulp.watch("../static/**/*.html", ["html"]);
+	gulp.watch("../static/**/*.css", ["css"]);
+	gulp.watch("../static/manifest.js", ["manifest"]);
 });
 
 gulp.task("default", sequence(
@@ -81,7 +81,7 @@ gulp.task("default", sequence(
 ));
 
 gulp.task("zip", () => {
-	return gulp.src("./dist/extension/**")
+	return gulp.src("../dist/extension/**")
 		.pipe(zip("extension.zip"))
-		.pipe(gulp.dest("./dist/"));
+		.pipe(gulp.dest("../dist/"));
 });

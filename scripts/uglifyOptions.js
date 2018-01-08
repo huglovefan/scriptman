@@ -1,6 +1,6 @@
 "use strict";
 
-const {dev, prod} = require("./scripts/modules/env");
+const {dev, prod} = require("./modules/env");
 
 // https://github.com/mishoo/UglifyJS2/tree/harmony#api-reference
 

@@ -5,7 +5,7 @@ const CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const webpack = require("webpack");
 
-const {dev, prod} = require("./scripts/modules/env");
+const {dev, prod} = require("./modules/env");
 
 // https://webpack.js.org/configuration/
 
@@ -62,7 +62,7 @@ module.exports = {
 	performance: {
 		hints: "warning",
 	},
-	context: __dirname,
+	context: path.resolve(__dirname, ".."),
 	target: "web",
 	stats: {
 		all: true,
