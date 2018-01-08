@@ -1,7 +1,8 @@
 "use strict";
 
 const gulp = require("gulp");
-const webpack = require("webpack-stream");
+const gutil = require("gulp-util");
+const webpack = require("webpack");
 const htmlmin = require("gulp-htmlmin");
 const uglify = require("gulp-uglify-es").default;
 const cleanCSS = require("gulp-clean-css");
@@ -25,10 +26,14 @@ gulp.task("tslint", () => {
 		.pipe(tslint.report());
 });
 
-gulp.task("scripts", () => {
-	return gulp.src(["./src/**/*.ts", "./src/**/*.vue"])
-		.pipe(webpack(requireUncached("./webpack.config.js")))
-		.pipe(gulp.dest("./dist/extension/js/"));
+gulp.task("scripts", (callback) => {
+	webpack(requireUncached("./webpack.config.js"), (err, stats) => {
+		if (err) {
+			throw new gutil.PluginError("webpack", err);
+		}
+		gutil.log("[webpack]", stats.toString());
+		callback();
+	});
 });
 
 gulp.task("static-scripts", () => {
