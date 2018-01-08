@@ -29,13 +29,7 @@ gulp.task("scripts", () => {
 
 gulp.task("static-scripts", () => {
 	return gulp.src(["!./static/manifest.js", "./static/**/*.js"])
-		.pipe(uglify(
-			prod ? require("./uglifyOptions.js") : {
-				output: {
-					beautify: true,
-				}
-			}
-		))
+		.pipe(uglify(require("./uglifyOptions.js")))
 		.pipe(gulp.dest("./dist/extension/"));
 });
 
