@@ -11,7 +11,7 @@ const tslint = require("gulp-tslint");
 
 const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
-console.assert(dev ^ prod);
+console.assert(dev ^ prod, "process.env.NODE_ENV is set");
 
 // https://github.com/gulpjs/gulp/blob/master/docs/API.md
 
