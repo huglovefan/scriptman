@@ -8,6 +8,10 @@ const cleanCSS = require("gulp-clean-css");
 const exports2json = require("gulp-exports2json");
 const zip = require("gulp-zip");
 const tslint = require("gulp-tslint");
+const sequence = require("gulp-sequence");
+
+const fs = require("fs");
+const requireUncached = require("require-uncached");
 
 const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
@@ -17,19 +21,19 @@ console.assert(dev ^ prod, "process.env.NODE_ENV is set");
 
 gulp.task("tslint", () => {
 	return gulp.src("./src/**/*.ts")
-		.pipe(tslint(require("./tslint.json")))
+		.pipe(tslint(requireUncached("./tslint.json")))
 		.pipe(tslint.report());
 });
 
 gulp.task("scripts", () => {
 	return gulp.src(["./src/**/*.ts", "./src/**/*.vue"])
-		.pipe(webpack(require("./webpack.config.js")))
+		.pipe(webpack(requireUncached("./webpack.config.js")))
 		.pipe(gulp.dest("./dist/extension/js/"));
 });
 
 gulp.task("static-scripts", () => {
 	return gulp.src(["!./static/manifest.js", "./static/**/*.js"])
-		.pipe(uglify(require("./uglifyOptions.js")))
+		.pipe(uglify(requireUncached("./uglifyOptions.js")))
 		.pipe(gulp.dest("./dist/extension/"));
 });
 
@@ -56,7 +60,7 @@ gulp.task("manifest", () => {
 		.pipe(gulp.dest("./dist/extension/"));
 });
 
-gulp.task("watch", ["scripts", "static-scripts", "html", "css", "manifest", "zip"], () => {
+gulp.task("watch", () => {
 	gulp.watch([
 		"./webpack.config.js",
 		"./uglifyOptions.js",
@@ -68,10 +72,10 @@ gulp.task("watch", ["scripts", "static-scripts", "html", "css", "manifest", "zip
 	gulp.watch("./static/manifest.js", ["manifest"]);
 });
 
-gulp.task("default", [
-	"tslint", "scripts", "static-scripts", "html", "css", "manifest",
+gulp.task("default", sequence(
+	["tslint", "scripts", "static-scripts", "html", "css", "manifest"],
 	...(dev ? ["watch"] : []),
-]);
+));
 
 gulp.task("zip", () => {
 	return gulp.src("./dist/extension/**")
