@@ -14,9 +14,7 @@ const sequence = require("gulp-sequence");
 const fs = require("fs");
 const requireUncached = require("require-uncached");
 
-const dev = (process.env.NODE_ENV === "development");
-const prod = (process.env.NODE_ENV === "production");
-console.assert(dev ^ prod, "process.env.NODE_ENV is set");
+const {dev, prod} = require("./scripts/modules/env");
 
 // https://github.com/gulpjs/gulp/blob/master/docs/API.md
 

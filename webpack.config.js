@@ -5,9 +5,7 @@ const CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const webpack = require("webpack");
 
-const dev = (process.env.NODE_ENV === "development");
-const prod = (process.env.NODE_ENV === "production");
-console.assert(dev ^ prod, "process.env.NODE_ENV is set");
+const {dev, prod} = require("./scripts/modules/env");
 
 // https://webpack.js.org/configuration/
 

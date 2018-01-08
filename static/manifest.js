@@ -4,9 +4,7 @@ const npmPackage = require("../package.json");
 
 console.assert(npmPackage);
 
-const dev = (process.env.NODE_ENV === "development");
-const prod = (process.env.NODE_ENV === "production");
-console.assert(dev ^ prod);
+const {dev, prod} = require("../scripts/modules/env");
 
 const nameSuffix = (dev) ? " (dev)" : "";
 
