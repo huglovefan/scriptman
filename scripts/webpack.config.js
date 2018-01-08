@@ -24,7 +24,7 @@ module.exports = {
 		syntaxCheckFrame: "./src/options/editor/syntaxCheckFrame.ts",
 	},
 	output: {
-		path: path.resolve(__dirname, "dist/extension/js/"),
+		path: path.resolve(__dirname, "../dist/extension/js/"),
 		filename: "[name].js",
 		publicPath: "/js/",
 	},

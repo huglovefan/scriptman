@@ -35,7 +35,7 @@ gulp.task("scripts", (callback) => {
 });
 
 gulp.task("static-scripts", () => {
-	return gulp.src(["!./static/manifest.js", "../static/**/*.js"])
+	return gulp.src(["!../static/manifest.js", "../static/**/*.js"])
 		.pipe(uglify(requireUncached("./uglifyOptions.js")))
 		.pipe(gulp.dest("../dist/extension/"));
 });
@@ -69,7 +69,7 @@ gulp.task("watch", () => {
 		"./uglifyOptions.js",
 		"../src/**/*.ts", "../src/**/*.vue"
 	], ["scripts"]);
-	gulp.watch(["!./static/manifest.js", "../static/**/*.js"], ["static-scripts"]);
+	gulp.watch(["!../static/manifest.js", "../static/**/*.js"], ["static-scripts"]);
 	gulp.watch("../static/**/*.html", ["html"]);
 	gulp.watch("../static/**/*.css", ["css"]);
 	gulp.watch("../static/manifest.js", ["manifest"]);
