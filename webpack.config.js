@@ -7,7 +7,7 @@ const webpack = require("webpack");
 
 const dev = (process.env.NODE_ENV === "development");
 const prod = (process.env.NODE_ENV === "production");
-console.assert(dev ^ prod);
+console.assert(dev ^ prod, "process.env.NODE_ENV is set");
 
 // https://webpack.js.org/configuration/
 
@@ -24,6 +24,11 @@ module.exports = {
 		
 		// options but not really
 		syntaxCheckFrame: "./src/options/editor/syntaxCheckFrame.ts",
+	},
+	output: {
+		path: path.resolve(__dirname, "dist/extension/js/"),
+		filename: "[name].js",
+		publicPath: "/js/",
 	},
 	module: {
 		rules: [
@@ -56,6 +61,14 @@ module.exports = {
 			".vue",
 		],
 	},
+	performance: {
+		hints: "warning",
+	},
+	context: __dirname,
+	target: "web",
+	stats: {
+		all: true,
+	},
 	plugins: [
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),
 		new CommonsChunkPlugin({
@@ -77,12 +90,7 @@ module.exports = {
 		}),
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.AggressiveMergingPlugin(),
-		...(prod ? [new webpack.optimize.ModuleConcatenationPlugin()] : []),
-		...(prod ? [new UglifyJsPlugin({uglifyOptions: require("./uglifyOptions.js")})] : []),
+		new webpack.optimize.ModuleConcatenationPlugin(),
+		new UglifyJsPlugin({uglifyOptions: require("./uglifyOptions.js")}),
 	],
-	output: {
-		path: path.resolve(__dirname, "dist/extension/js/"),
-		publicPath: "/js/",
-		filename: "[name].js",
-	},
 };

@@ -3,11 +3,36 @@ interface CacheMapEntry <T> {
 	value: T;
 }
 
-export default abstract class CacheMap <K, V> {
+export interface CacheMapOptions {
+	maxSize: number;
+	timeToLive: number;
+}
+
+const defaultOptions: Readonly<CacheMapOptions> = {
+	maxSize: 10,
+	timeToLive: 1000,
+};
+
+export default class CacheMap <K, V> {
+	
+	private static getOption <K extends keyof CacheMapOptions>
+	(options: Partial<CacheMapOptions> | undefined, key: K): CacheMapOptions[K] {
+		if (options === void 0 || options[key] === void 0) {
+			return defaultOptions[key];
+		}
+		return options[key]!;
+	}
 	
 	private readonly map = new Map<K, CacheMapEntry<V>>();
-	protected maxSize = 10;
-	protected timeToLive = 10000;
+	private readonly getItem: (key: K) => V;
+	private readonly maxSize: number;
+	private readonly timeToLive: number;
+	
+	public constructor (getItem: CacheMap<K, V>["getItem"], options?: Partial<CacheMapOptions>) {
+		this.getItem = getItem;
+		this.maxSize = CacheMap.getOption(options, "maxSize");
+		this.timeToLive = CacheMap.getOption(options, "timeToLive");
+	}
 	
 	public get (key: K) {
 		if (this.map.has(key)) {
@@ -33,6 +58,4 @@ export default abstract class CacheMap <K, V> {
 		}
 		return value;
 	}
-	
-	protected abstract getItem (key: K): V;
 }
