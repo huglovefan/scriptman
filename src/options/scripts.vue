@@ -81,7 +81,7 @@
 				tempHideAll: isPopup,
 			};
 		},
-		async created (this: any) {
+		created (this: any) {
 			if (isPopup && activeTabURLPromise) {
 				activeTabURLPromise
 					.then((url) => {
