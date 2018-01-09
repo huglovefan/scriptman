@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import {ScriptInit} from "../../background/Script";
 import {AnySectionInit} from "../../background/Section";
+import isPlainObject from "../../misc/isPlainObject";
 import {documentLoaded, select, selectAll} from "../all";
 import {SectionForm, SectionFormElement} from "./SectionForm";
 
@@ -164,11 +165,13 @@ namespace Editor {
 	class EditorEdit extends Editor {
 		
 		public scriptName: string;
+		private scriptPromise: PromiseLike<ScriptInit | undefined>;
 		
 		public constructor (mode: "edit", id: string, from: string | null) {
 			super(mode, id, from);
 			this.scriptName = ""; // "no initializer & not definitely assigned in constructor"
 			this.updateName(`script #${id}`);
+			this.scriptPromise = browser.storage.local.get(id).then((items: any) => items[id]);
 		}
 		
 		private updateName (name: string) {
@@ -205,10 +208,8 @@ namespace Editor {
 		}
 		
 		private async loadScript () {
-			// const script = await ScriptManager.getRaw(this.id);
-			// faster
-			const script = <ScriptInit | undefined> (await browser.storage.local.get(this.id))[this.id];
-			if (script === undefined) {
+			const script = await this.scriptPromise;
+			if (!script || !isPlainObject(script)) {
 				alert("The script doesn't exist.");
 				location.assign("?mode=new");
 				return;

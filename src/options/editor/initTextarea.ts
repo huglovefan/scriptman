@@ -1,5 +1,5 @@
 import {select} from "../all";
-import {syntaxCheckOptions} from "../editormain";
+import {syntaxCheckOptions} from "../editor";
 import {SectionForm, SectionFormElement} from "./SectionForm";
 import {syntaxCheck} from "./syntaxCheck";
 

@@ -1,7 +1,7 @@
 import {AnyMatchInit} from "../../background/Match";
 import {AnySectionInit, CssSection, JsSection, Section} from "../../background/Section";
 import {eventRace, select, selectAll} from "../all";
-import {editor, syntaxCheckOptions} from "../editormain";
+import {editor, syntaxCheckOptions} from "../editor";
 import initTextarea from "./initTextarea";
 import {MatchForm, MatchFormElement} from "./MatchForm";
 import {syntaxCheck} from "./syntaxCheck";

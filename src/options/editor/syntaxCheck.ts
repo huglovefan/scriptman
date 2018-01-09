@@ -1,3 +1,4 @@
+import {ZalgoPromise} from "zalgo-promise";
 import {SyntaxCheckWindow} from "./syntaxCheckFrame";
 
 export type SyntaxCheckResult = {
@@ -20,7 +21,7 @@ export function syntaxCheck (code: string, options?: SyntaxCheckOptions) {
 	iframe.srcdoc = `<script src="../js/syntaxCheckFrame.js"></script>`;
 	iframe.setAttribute("style", "position: absolute; top: -9999px; left: -9999px;");
 	
-	return new Promise<SyntaxCheckResult | null>((resolve, reject) => {
+	return new ZalgoPromise<SyntaxCheckResult | null>((resolve, reject) => {
 		
 		const onIframeLoad = async () => {
 			const syntaxCheckFunction = (<SyntaxCheckWindow> iframe.contentWindow).syntaxCheck;

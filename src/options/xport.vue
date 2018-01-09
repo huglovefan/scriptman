@@ -13,6 +13,7 @@
 <script lang="ts">
 	import browser from "webextension-polyfill";
 	import ScriptManager from "./scriptManagerRemote";
+	import isPlainObject from "../misc/isPlainObject";
 	export default {
 		data: function () {
 			return {
@@ -24,7 +25,7 @@
 				const json = this.storageContents;
 				try {
 					const data = JSON.parse(json);
-					if (Object.prototype.toString.call(data) !== "[object Object]") {
+					if (!isPlainObject(data)) {
 						throw new Error("Import data must be an object.");
 					}
 					await ScriptManager.importStorage(data);
