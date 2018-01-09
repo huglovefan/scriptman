@@ -1,3 +1,7 @@
+//
+// gets the ".href" of a url without the hash or fragment identifier
+//
+
 import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
 
 export default function hrefNoHash (url: ReadonlyURL) {

@@ -1,5 +1,8 @@
+import isBackgroundPage from "../misc/isBackgroundPage";
 import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
 import {AnySection, AnySectionInit, Section} from "./Section";
+
+console.assert(isBackgroundPage());
 
 export interface ScriptInit {
 	name: string;

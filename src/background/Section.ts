@@ -1,9 +1,12 @@
 import {CHROME} from "../browser/browser";
+import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
+import isBackgroundPage from "../misc/isBackgroundPage";
 import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
-import {FRAME_ID_TOP} from "./background";
 import {CssInjection, Injection, JsInjection} from "./Injection";
 import {AnyMatch, AnyMatchInit, Match} from "./Match";
 import {Script} from "./Script";
+
+console.assert(isBackgroundPage());
 
 //
 //

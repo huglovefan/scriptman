@@ -4,6 +4,9 @@
 
 import {CHROME} from "../browser/browser";
 import DefaultWeakMap from "../misc/DefaultWeakMap";
+import isBackgroundPage from "../misc/isBackgroundPage";
+
+console.assert(isBackgroundPage());
 
 const fix = () => {
 	

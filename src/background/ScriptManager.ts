@@ -4,10 +4,13 @@
 
 import browser from "webextension-polyfill";
 import Deferred from "../misc/Deferred";
+import isBackgroundPage from "../misc/isBackgroundPage";
 import {BackgroundPageWindow} from "./background";
 import {Connector} from "./Connector";
 import {Script, ScriptInit} from "./Script";
 import {AnySection} from "./Section";
+
+console.assert(isBackgroundPage());
 
 namespace ScriptManager {
 	

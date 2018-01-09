@@ -37,7 +37,9 @@
 	import hrefNoHash from "../misc/hrefNoHash";
 	import escapeRegExp from "../misc/escapeRegExp";
 	import entriesToObject from "../misc/entriesToObject";
+	import canRunScripts from "../misc/canRunScripts";
 	import {Script} from "../background/Script";
+	import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
 	import {createElement} from "./all";
 	import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
 	
@@ -52,10 +54,21 @@
 	}
 	
 	const activeTabPromise =
-		isPopup && <Promise<chrome.tabs.Tab[]>> browser.tabs.query({active: true, currentWindow: true});
+		isPopup &&
+		(<Promise<chrome.tabs.Tab[]>> browser.tabs.query({active: true, currentWindow: true}))
+			.then((tabs) => {
+				if (tabs.length !== 1) {
+					throw new Error("Failed to get current tab");
+				}
+				return tabs[0];
+			});
 	const activeTabURLPromise =
-		activeTabPromise && activeTabPromise.then((tabs) => {
-			return new ReadonlyURL(tabs[0].url!);
+		activeTabPromise && activeTabPromise.then((tab) => {
+			return new ReadonlyURL(tab.url!);
+		});
+	const activeTabCanRunPromise =
+		activeTabPromise && activeTabPromise.then((tab) => {
+			return canRunScripts(tab.id!, FRAME_ID_TOP);
 		});
 	
 	const allScriptsPromise =
@@ -83,10 +96,9 @@
 		},
 		created (this: any) {
 			if (isPopup && activeTabURLPromise) {
-				activeTabURLPromise
-					.then((url) => {
-						// todo: this should just be a check for "can scripts run here"
-						if (/^https?:$/.test(url.protocol)) {
+				Promise.all([activeTabURLPromise, activeTabCanRunPromise])
+					.then(([url, canRun]) => {
+						if (canRun) {
 							this.search = hrefNoHash(url);
 							this.updateSearch();
 						}

@@ -1,9 +1,12 @@
 import {FIREFOX} from "../browser/browser";
+import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
+import isBackgroundPage from "../misc/isBackgroundPage";
 import URLCache from "../URLCache/URLCache";
-import {FRAME_ID_TOP} from "./background";
 import ScriptManager from "./ScriptManager";
 import {AnySection, Section} from "./Section";
 import webNavigation from "./webNavigation";
+
+console.assert(isBackgroundPage());
 
 export abstract class Connector {
 	

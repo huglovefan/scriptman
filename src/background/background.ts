@@ -1,11 +1,13 @@
+import isBackgroundPage from "../misc/isBackgroundPage";
 import BadgeManager from "./BadgeManager";
 import ScriptManager from "./ScriptManager";
 
+console.assert(isBackgroundPage());
+
 export interface BackgroundPageWindow extends Window {
+	BadgeManager?: BadgeManager;
 	ScriptManager?: ScriptManager;
 }
 
-export const FRAME_ID_TOP = 0;
-
-new BadgeManager();
+(<BackgroundPageWindow> window).BadgeManager = new BadgeManager();
 ScriptManager.init();

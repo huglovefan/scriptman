@@ -1,4 +1,7 @@
 import browser from "webextension-polyfill";
+import isBackgroundPage from "../misc/isBackgroundPage";
+
+console.assert(isBackgroundPage());
 
 // https://crbug.com/632009
 type InjectDetails = chrome.tabs.InjectDetails & {cssOrigin?: "user" | "author"};

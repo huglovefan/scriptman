@@ -2,9 +2,12 @@
 // singleton for managing the browser action badge for tabs
 //
 
-import {FRAME_ID_TOP} from "./background";
+import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
+import isBackgroundPage from "../misc/isBackgroundPage";
 import {Script} from "./Script";
 import webNavigation from "./webNavigation";
+
+console.assert(isBackgroundPage());
 
 class BadgeManager {
 	
@@ -26,6 +29,10 @@ class BadgeManager {
 				this.removedScript(e.detail.section.script, e.detail.tabId);
 			}
 		});
+	}
+	
+	public tabHasScripts (tabId: number) {
+		return (this.tabGetCount(tabId) !== 0);
 	}
 	
 	private onNavigationCommitted (details: chrome.webNavigation.WebNavigationTransitionCallbackDetails) {
