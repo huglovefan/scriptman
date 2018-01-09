@@ -106,14 +106,14 @@ class WebNavigationConnector extends Connector {
 		);
 	}
 	
-	private async callback (details: chrome.webNavigation.WebNavigationFramedCallbackDetails) {
+	private callback (details: chrome.webNavigation.WebNavigationFramedCallbackDetails) {
 		// if the frameBehavior is overridden, checking the one in Section isn't enough
 		if (this.frameBehavior !== this.section.frameBehavior &&
 			!testFrameBehavior(this.frameBehavior, details.frameId)) {
 			return;
 		}
 		// we already know the url matches the matches, so test only excludes
-		await this.section.injectIfNotExcluded(URLCache.get(details.url), details.tabId, details.frameId);
+		this.section.injectIfNotExcluded(URLCache.get(details.url), details.tabId, details.frameId);
 	}
 	
 	public disconnect () {
@@ -143,8 +143,8 @@ class WebRequestConnector extends Connector {
 		);
 	}
 	
-	private async callback (details: chrome.webRequest.WebResponseCacheDetails) {
-		await this.section.injectIfMatches(URLCache.get(details.url), details.tabId, details.frameId);
+	private callback (details: chrome.webRequest.WebResponseCacheDetails) {
+		this.section.injectIfMatches(URLCache.get(details.url), details.tabId, details.frameId);
 	}
 	
 	public disconnect () {

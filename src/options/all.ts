@@ -1,5 +1,5 @@
-import browser from "webextension-polyfill";
-import {BackgroundPageWindow} from "../background/background";
+import {ZalgoPromise} from "zalgo-promise";
+import {getScriptManager} from "../misc/getBackgroundPage";
 
 export function select (selector: string, scope: NodeSelector) {
 	const result = scope.querySelector(selector);
@@ -37,16 +37,10 @@ export function createElement (tagName: string, properties: object | null = null
 	return element;
 }
 
-export async function getScriptManager () {
-	const backgroundPage = <BackgroundPageWindow> await browser.runtime.getBackgroundPage();
-	if (!backgroundPage || !backgroundPage.ScriptManager) {
-		throw new Error("Couldn't get background page");
-	}
-	return backgroundPage.ScriptManager;
-}
+export {getScriptManager};
 
 export const documentLoaded = <T = void> (x?: T) =>
-	new Promise<T>(function (resolve) {
+	new ZalgoPromise<T>(function (resolve) {
 		if (document.readyState !== "loading") {
 			resolve(x);
 		} else {
@@ -65,7 +59,7 @@ type EventRaceList =
 	[EventTarget, string, string, string, string, string, string, string, string];
 
 export function eventRace (...lists: EventRaceList[]) {
-	return new Promise<Event>((resolve) => {
+	return new ZalgoPromise<Event>((resolve) => {
 		const callback = (event: Event) => {
 			resolve(event);
 			for (const [target, ...events] of lists) {

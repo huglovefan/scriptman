@@ -1,3 +1,4 @@
+import {ZalgoPromise} from "zalgo-promise";
 import {CHROME} from "../browser/browser";
 import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
 import isBackgroundPage from "../misc/isBackgroundPage";
@@ -86,44 +87,44 @@ export abstract class Section <TType extends keyof SectionClassMap> {
 		);
 	}
 	
-	public async injectIfMatches (url: ReadonlyURL, tabId: number, frameId: number) {
-		return (
-			this.testFrameId(frameId) &&
-			this.test(url) &&
-			await this.inject(tabId, frameId)
-		);
-	}
-	
-	public async injectIfNotExcluded (url: ReadonlyURL, tabId: number, frameId: number) {
-		return (
-			this.testFrameId(frameId) &&
-			this.test(url, true) &&
-			await this.inject(tabId, frameId)
-		);
-	}
-	
-	private async inject (tabId: number, frameId: number) {
-		const injected = await this.injection.inject(tabId, frameId);
-		if (injected) {
-			window.dispatchEvent(new CustomEvent("sectioninjected", {detail: {
-				section: this,
-				tabId,
-				frameId,
-			}}));
+	public injectIfMatches (url: ReadonlyURL, tabId: number, frameId: number) {
+		if (!this.testFrameId(frameId) || !this.test(url)) {
+			return ZalgoPromise.resolve(false);
 		}
-		return injected;
+		return this.inject(tabId, frameId);
 	}
 	
-	public async remove (tabId: number, frameId: number) {
-		const removed = await this.injection.remove(tabId, frameId);
-		if (removed) {
-			window.dispatchEvent(new CustomEvent("sectioninjectionremoved", {detail: {
-				section: this,
-				tabId,
-				frameId,
-			}}));
+	public injectIfNotExcluded (url: ReadonlyURL, tabId: number, frameId: number) {
+		if (!this.testFrameId(frameId) || !this.test(url, true)) {
+			return ZalgoPromise.resolve(false);
 		}
-		return removed;
+		return this.inject(tabId, frameId);
+	}
+	
+	private inject (tabId: number, frameId: number) {
+		return this.injection.inject(tabId, frameId).then((injected) => {
+			if (injected) {
+				window.dispatchEvent(new CustomEvent("sectioninjected", {detail: {
+					section: this,
+					tabId,
+					frameId,
+				}}));
+			}
+			return injected;
+		});
+	}
+	
+	public remove (tabId: number, frameId: number) {
+		return this.injection.remove(tabId, frameId).then((removed) => {
+			if (removed) {
+				window.dispatchEvent(new CustomEvent("sectioninjectionremoved", {detail: {
+					section: this,
+					tabId,
+					frameId,
+				}}));
+			}
+			return removed;
+		});
 	}
 }
 

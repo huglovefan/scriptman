@@ -3,44 +3,47 @@
 //
 
 import browser from "webextension-polyfill";
+import {ZalgoPromise} from "zalgo-promise";
 import FRAME_ID_TOP from "./FRAME_ID_TOP";
 import {getBadgeManager} from "./getBackgroundPage";
 
-export default async function canRunScripts (tabId: number, frameId = FRAME_ID_TOP) {
-	
-	// the badge manager counts injections in the top frame,
-	// so we can use it to check if scripts have been injected into it
-	if (frameId === FRAME_ID_TOP) {
-		try {
-			const badgeManager = await getBadgeManager();
-			// only return true if we're sure about it,
-			// there could just not be any scripts for the page
-			if (badgeManager.tabHasScripts(tabId)) {
-				console.log("[canRunScripts] scripts have been ran in the tab");
-				return true;
-			}
-		} catch {
-		}
+// the badge manager counts injections in the top frame,
+// so we can use it to check if scripts have been injected into it
+function checkWithBadgeManager (tabId: number, frameId = FRAME_ID_TOP) {
+	if (frameId !== FRAME_ID_TOP) {
+		return ZalgoPromise.resolve(null);
 	}
-	
-	// check if we can inject stuff
-	try {
-		const result: any[] = await browser.tabs.executeScript(tabId, {
+	return getBadgeManager().then((badgeManager) => {
+		if (badgeManager.tabHasScripts(tabId)) {
+			console.log("[canRunScripts] scripts have been ran in the tab");
+			return true;
+		}
+		return null;
+	});
+}
+
+function checkWithExecuteScript (tabId: number, frameId = FRAME_ID_TOP) {
+	return new ZalgoPromise<boolean>((resolve) => {
+		browser.tabs.executeScript(tabId, {
 			allFrames: false,
 			code: "true",
 			frameId,
 			matchAboutBlank: true,
 			runAt: "document_start",
+		}).then((results: any[]) => {
+			resolve(Array.isArray(results) && results.some(Boolean));
+		}).catch(() => {
+			resolve(false);
 		});
-		// check if our true is in the result array
-		if (Array.isArray(result) && result.length !== 0 && result.some(Boolean)) {
-			console.log("[canRunScripts] injection succeeded");
-			return true;
-		}
-		return false;
-	} catch {
-		console.log("[canRunScripts] injection failed");
-		return false;
+	});
+}
+
+export default function canRunScripts (tabId: number, frameId = FRAME_ID_TOP) {
+	if (frameId === FRAME_ID_TOP) {
+		checkWithBadgeManager(tabId, frameId).then((result) => {
+			if (result !== null) return result;
+			return checkWithExecuteScript(tabId, frameId);
+		});
 	}
-	
+	return checkWithExecuteScript(tabId, frameId);
 }

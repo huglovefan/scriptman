@@ -3,7 +3,8 @@
 //
 
 import browser from "webextension-polyfill";
-import Deferred from "../misc/Deferred";
+import {ZalgoPromise} from "zalgo-promise";
+import entriesToObject from "../misc/entriesToObject";
 import isBackgroundPage from "../misc/isBackgroundPage";
 import {BackgroundPageWindow} from "./background";
 import {Connector} from "./Connector";
@@ -14,10 +15,12 @@ console.assert(isBackgroundPage());
 
 namespace ScriptManager {
 	
+	type GAFRD = chrome.webNavigation.GetAllFrameResultDetails;
+		
 	export type StorageChanges = {[key: string]: chrome.storage.StorageChange};
 	export type SnapshotData = {
 		tabs: chrome.tabs.Tab[],
-		frames: {[tabId: number]: chrome.webNavigation.GetAllFrameResultDetails[]},
+		frames: {[tabId: number]: GAFRD[]},
 	};
 	
 	function isMetaKey (key: string) {
@@ -27,21 +30,15 @@ namespace ScriptManager {
 	async function getSnapshot () {
 		
 		const tabs: chrome.tabs.Tab[] = await browser.tabs.query({});
-		
-		const framePromises: {[tabId: number]: Promise<chrome.webNavigation.GetAllFrameResultDetails[]>} = {};
-		for (const tab of tabs) {
-			framePromises[tab.id!] = browser.webNavigation.getAllFrames({tabId: tab.id!});
-		}
-		
-		const frames: {[tabId: number]: chrome.webNavigation.GetAllFrameResultDetails[]} = {};
-		for (const tabId in framePromises) {
-			frames[tabId] = await framePromises[tabId];
-		}
+		const framePromiseEntries = tabs.map((tab) =>
+			<[number, GAFRD[]]> [tab.id!, browser.webNavigation.getAllFrames({tabId: tab.id!})]);
+		const framePromises = entriesToObject(framePromiseEntries);
+		const frames = await ZalgoPromise.hash<GAFRD[]>(framePromises);
 		
 		return {tabs, frames};
 	}
 	
-	async function fixupAndApplyStorage (storage: {[key: string]: any}, alwaysApply = false) {
+	const fixupAndApplyStorage = (storage: {[key: string]: any}, alwaysApply = false) => {
 		
 		const extensionVersion = chrome.runtime.getManifest().version;
 		const newVersion = (storage.__version__ !== extensionVersion);
@@ -76,30 +73,29 @@ namespace ScriptManager {
 		}
 		
 		if (newVersion || alwaysApply) {
-			await browser.storage.local.set(storage);
+			return (<Promise<any>> browser.storage.local.set(storage)).then(() => storage);
 		}
 		
-		return storage;
-	}
+		return ZalgoPromise.resolve(storage);
+	};
 	
 	const scripts = new Map<string, Script>();
 	const connectors = new Map<AnySection, Connector>();
-	const loaded = new Deferred();
+	const loaded = new ZalgoPromise<undefined>();
 	
 	export async function init () {
 		
-		if (loaded.done) {
+		if (loaded.resolved) {
 			return;
 		}
 		
 		// inject scripts to existing tabs on browser startup
-		chrome.runtime.onStartup.addListener(async () => {
-			const snapshotDataPromise = getSnapshot();
-			await loaded;
-			const snapshotData = await snapshotDataPromise;
-			for (const [_section, connector] of connectors) {
-				connector.startupInject(snapshotData);
-			}
+		chrome.runtime.onStartup.addListener(() => {
+			ZalgoPromise.all([getSnapshot(), loaded]).then(([snapshotData]) => {
+				for (const [_section, connector] of connectors) {
+					connector.startupInject(snapshotData);
+				}
+			});
 		});
 		
 		block: {
@@ -124,7 +120,7 @@ namespace ScriptManager {
 		
 		browser.storage.onChanged.addListener(onStorageChanged);
 		
-		loaded.resolve();
+		loaded.resolve(undefined);
 	}
 	
 	function onStorageChanged (changes: ScriptManager.StorageChanges, areaName: string) {
@@ -149,13 +145,14 @@ namespace ScriptManager {
 		}
 	}
 	
-	async function uninject (snapshot: Promise<ScriptManager.SnapshotData>, section: AnySection) {
-		const data = await snapshot;
-		for (const tab of data.tabs) {
-			for (const frame of data.frames[tab.id!]) {
-				section.injection.remove(tab.id!, frame.frameId);
+	function uninject (snapshot: PromiseLike<ScriptManager.SnapshotData>, section: AnySection) {
+		snapshot.then((data) => {
+			for (const tab of data.tabs) {
+				for (const frame of data.frames[tab.id!]) {
+					section.injection.remove(tab.id!, frame.frameId);
+				}
 			}
-		}
+		});
 	}
 	
 	function remove (id: string) {
@@ -217,24 +214,17 @@ namespace ScriptManager {
 	
 	// public api
 	
-	export async function getAll () {
-		await loaded;
-		return scripts.entries();
-	}
+	export const getAll = () => loaded.then(() => scripts.entries());
 	
-	export async function get (id: string) {
-		await loaded;
-		return scripts.get(id);
-	}
+	export const get = (id: string) => loaded.then(() => scripts.get(id));
 	
-	export async function getRaw (id: string) {
-		return <ScriptInit | undefined> (await browser.storage.local.get(id))[id];
-	}
+	export const getRaw = (id: string) =>
+		loaded.then(() =>
+			(<Promise<{[key: string]: ScriptInit | undefined}>> browser.storage.local.get(id)).then((items) =>
+				items[id]));
 	
-	export async function importStorage (storage: {[key: string]: any}) {
-		await loaded;
-		await fixupAndApplyStorage(storage, true);
-	}
+	export const importStorage = (storage: {[key: string]: any}) =>
+		loaded.then(() => fixupAndApplyStorage(storage, true));
 }
 
 type ScriptManager = typeof ScriptManager;

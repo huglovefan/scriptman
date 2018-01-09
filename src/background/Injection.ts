@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import {ZalgoPromise} from "zalgo-promise";
 import isBackgroundPage from "../misc/isBackgroundPage";
 
 console.assert(isBackgroundPage());
@@ -9,40 +10,42 @@ type InjectDetails = chrome.tabs.InjectDetails & {cssOrigin?: "user" | "author"}
 // https://crbug.com/608854
 type TabsAPI = keyof typeof chrome.tabs | "removeCSS";
 
+const returnTrue = () => true;
+const returnFalse = () => false;
+
 export abstract class Injection {
 	protected readonly injectDetails: InjectDetails;
 	public constructor (injectDetails: Readonly<InjectDetails>) {
 		this.injectDetails = injectDetails;
 	}
-	public abstract inject (tabId: number, frameId: number): Promise<boolean>;
-	public abstract remove (tabId: number, frameId: number): Promise<boolean>;
-	protected async callTabsAPI (method: TabsAPI, tabId: number, frameId: number) {
-		try {
-			this.injectDetails.frameId = frameId;
-			await browser.tabs[method](tabId, this.injectDetails);
-		} catch (error) {
-			return false;
+	public abstract inject (tabId: number, frameId: number): PromiseLike<boolean>;
+	public abstract remove (tabId: number, frameId: number): PromiseLike<boolean>;
+	protected callTabsAPI (method: TabsAPI, tabId: number, frameId: number) {
+		this.injectDetails.frameId = frameId;
+		if (browser.tabs[method] === undefined) {
+			return ZalgoPromise.resolve(false);
 		}
-		return true;
+		const happening: Promise<any> = browser.tabs[method](tabId, this.injectDetails);
+		return happening.then(returnTrue, returnFalse);
 	}
 }
 
 export class CssInjection extends Injection {
-	public async inject (tabId: number, frameId: number) {
+	public inject (tabId: number, frameId: number) {
 		return super.callTabsAPI("insertCSS", tabId, frameId);
 	}
-	public async remove (tabId: number, frameId: number) {
+	public remove (tabId: number, frameId: number) {
 		return super.callTabsAPI("removeCSS", tabId, frameId);
 	}
 }
 
 export class JsInjection extends Injection {
-	public async inject (tabId: number, frameId: number) {
+	public inject (tabId: number, frameId: number) {
 		return super.callTabsAPI("executeScript", tabId, frameId);
 	}
 	// tslint:disable-next-line:prefer-function-over-method
-	public async remove () {
+	public remove () {
 		// not supported
-		return false;
+		return ZalgoPromise.resolve(false);
 	}
 }

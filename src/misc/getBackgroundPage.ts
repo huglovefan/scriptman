@@ -3,34 +3,44 @@
 //
 
 import browser from "webextension-polyfill";
+import {ZalgoPromise} from "zalgo-promise";
 import {BackgroundPageWindow} from "../background/background";
+import BadgeManager from "../background/BadgeManager";
+import ScriptManager from "../background/ScriptManager";
 import isBackgroundPage from "./isBackgroundPage";
 
-export default async function getBackgroundPage () {
-	
+export default function getBackgroundPage () {
 	const win = window;
 	if (isBackgroundPage(win)) {
 		console.log("[getBackgroundPage] we're the background page");
-		return win;
+		return ZalgoPromise.resolve(win);
 	}
-	
-	const backgroundPage = <BackgroundPageWindow> await browser.runtime.getBackgroundPage();
-	if (!backgroundPage || !backgroundPage.ScriptManager) {
-		throw new Error("Couldn't get background page");
-	}
-	console.log("[getBackgroundPage] got it from browser.runtime");
-	return backgroundPage;
-	
+	return new ZalgoPromise<BackgroundPageWindow>((resolve, reject) => {
+		browser.runtime.getBackgroundPage().then((backgroundPage: BackgroundPageWindow) => {
+			if (!backgroundPage || !backgroundPage.ScriptManager) {
+				return reject(new Error("Couldn't get background page"));
+			}
+			console.log("[getBackgroundPage] got it from browser.runtime");
+			resolve(backgroundPage);
+		}, reject);
+	});
 }
 
-const getThing = async <K extends keyof BackgroundPageWindow> (key: K, friendlyName: string = key) => {
-	const backgroundPage = await getBackgroundPage();
-	const result = backgroundPage[key];
-	if (result === undefined) {
-		throw new Error(`Couldn't get ${friendlyName}`);
-	}
-	return result;
+// just have them here as non-optional to fix the return type of getThing
+interface ThingsToGet extends BackgroundPageWindow {
+	BadgeManager: BadgeManager;
+	ScriptManager: ScriptManager;
+}
+
+const getThing = <K extends keyof ThingsToGet> (key: K, friendlyName: string = key) => {
+	return getBackgroundPage().then((backgroundPage) => {
+		const result = (<ThingsToGet> backgroundPage)[key];
+		if (result === undefined) {
+			throw new Error(`Couldn't get ${friendlyName}`);
+		}
+		return result;
+	});
 };
 
-export const getBadgeManager = async () => (await getThing("BadgeManager", "badge manager"))!;
-export const getScriptManager = async () => (await getThing("ScriptManager", "script manager"))!;
+export const getBadgeManager = () => getThing("BadgeManager", "badge manager");
+export const getScriptManager = () => getThing("ScriptManager", "script manager");
