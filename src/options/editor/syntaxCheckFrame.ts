@@ -25,6 +25,39 @@ function linenoColno2Index (s: string, lineno: number, colno: number) {
 	return result;
 }
 
+const tokens = {
+	whitespace: /\s+/y,
+	lineComment: /\/\/[^\n\r\u2028\u2029]*/y,
+	blockComment: /\/\*[^]*?\*\//y,
+	semicolons: /;+/y,
+	stringLiteral: /(['"])((?:\\[^]|(?!\1).)*?)\1/y,
+};
+function isStrictSource (source: string) {
+	for (let i = 0; i < source.length; /**/) {
+		const oldIndex = i;
+		for (const [type, pattern] of Object.entries(tokens)) {
+			pattern.lastIndex = i;
+			const match = pattern.exec(source);
+			// try next one
+			if (!match) {
+				continue;
+			}
+			// tslint:disable-next-line:no-magic-numbers
+			if (type === "stringLiteral" && match[2] === "use strict") {
+				return true;
+			}
+			// ok, start the token loop again
+			i += match[0].length;
+			break;
+		}
+		// no matching pattern
+		if (i === oldIndex) {
+			break;
+		}
+	}
+	return false;
+}
+
 let offsets: {lineno: number, colno: number} | undefined;
 function getOffsets () {
 	if (offsets !== undefined) {
@@ -42,8 +75,6 @@ function getOffsets () {
 	});
 }
 
-// todo: maybe detecting strict mode is possible after all? i know more about parsing now
-
 (<SyntaxCheckWindow> window).syntaxCheck = syntaxCheck;
 function syntaxCheck (originalCode: string, options: SyntaxCheckOptions = {}): ZalgoPromise<SyntaxCheckResult | null> {
 	return getOffsets().then<SyntaxCheckResult | null>((offsets) => {
@@ -54,13 +85,6 @@ function syntaxCheck (originalCode: string, options: SyntaxCheckOptions = {}): Z
 		
 		code = `throw "ok";\n` + code;
 		addedLines++;
-		
-		if (options.strictMode) {
-			code =
-				`"use strict";\n` +
-				code;
-			addedLines++;
-		}
 		
 		if (options.wrapFunction === "arrow") {
 			code =
@@ -73,6 +97,13 @@ function syntaxCheck (originalCode: string, options: SyntaxCheckOptions = {}): Z
 				`(function(){\n` +
 				code + `\n` +
 				`}());`;
+			addedLines++;
+		}
+		
+		if (options.strictMode || isStrictSource(originalCode)) {
+			code =
+				`"use strict";\n` +
+				code;
 			addedLines++;
 		}
 		
