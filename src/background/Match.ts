@@ -47,6 +47,7 @@ export abstract class Match <TType extends keyof MatchClassMap> {
 		this.value = init.value;
 	}
 	public abstract test (url: ReadonlyURL): boolean;
+	public abstract toMatchPatterns (): string[] | null;
 	/** https://developer.chrome.com/extensions/events#type-UrlFilter */
 	public abstract toUrlFilters (): ReadonlyArray<chrome.events.UrlFilter>;
 }
@@ -61,6 +62,12 @@ interface DomainMatchInit extends MatchInit<"domain"> {
 class DomainMatch extends Match<"domain"> {
 	public test (url: ReadonlyURL) {
 		return ("." + url.hostname).endsWith("." + this.value);
+	}
+	public toMatchPatterns () {
+		return [
+			`*://${this.value}/*`,
+			`*://*.${this.value}/*`,
+		];
 	}
 	public toUrlFilters (): ReadonlyArray<chrome.events.UrlFilter> {
 		return [
@@ -81,6 +88,11 @@ interface RegexMatchInit extends MatchInit<"regex"> {
 class RegexMatch extends Match<"regex"> {
 	public test (url: ReadonlyURL) {
 		return RegExp(this.value).test(hrefNoHash(url));
+	}
+	// tslint:disable-next-line:prefer-function-over-method
+	public toMatchPatterns () {
+		// not supported
+		return null;
 	}
 	public toUrlFilters (): ReadonlyArray<chrome.events.UrlFilter> {
 		return [{urlMatches: this.value}];

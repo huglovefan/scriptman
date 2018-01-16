@@ -1,5 +1,5 @@
 //
-// Type definitions for zalgo-promise by krakenjs
+// type definitions for zalgo-promise by krakenjs
 // https://github.com/krakenjs/zalgo-promise/
 //
 
@@ -71,9 +71,12 @@ declare module "zalgo-promise" {
 		public static all <T1, T2, T3, T4, T5> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>),
 			(T3 | PromiseLike<T3>), (T4 | PromiseLike<T4>), (T5 | PromiseLike<T5>)]):
 			ZalgoPromise<[T1, T2, T3, T4, T5]>;
-		public static all <T1, T2, T3, T4> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>), (T3 | PromiseLike<T3>), (T4 | PromiseLike<T4>)]): ZalgoPromise<[T1, T2, T3, T4]>;
-		public static all <T1, T2, T3> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>), (T3 | PromiseLike<T3>)]): ZalgoPromise<[T1, T2, T3]>;
-		public static all <T1, T2> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>)]): ZalgoPromise<[T1, T2]>;
+		public static all <T1, T2, T3, T4> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>),
+			(T3 | PromiseLike<T3>), (T4 | PromiseLike<T4>)]): ZalgoPromise<[T1, T2, T3, T4]>;
+		public static all <T1, T2, T3> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>),
+			(T3 | PromiseLike<T3>)]): ZalgoPromise<[T1, T2, T3]>;
+		public static all <T1, T2> (promises: [(T1 | PromiseLike<T1>), (T2 | PromiseLike<T2>)]):
+			ZalgoPromise<[T1, T2]>;
 		public static all <T> (promises: [(T | PromiseLike<T>)]): ZalgoPromise<[T]>;
 		
 		public static all <X> (promises: (X | PromiseLike<X>)[]): ZalgoPromise<X[]>;
