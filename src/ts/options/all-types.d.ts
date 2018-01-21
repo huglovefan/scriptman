@@ -17,3 +17,7 @@ interface HTMLTextAreaElement {
 interface HTMLIFrameElement {
 	srcdoc: string;
 }
+
+interface HTMLCollection {
+	[Symbol.iterator] (): IterableIterator<Element>;
+}
