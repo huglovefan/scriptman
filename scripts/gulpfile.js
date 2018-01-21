@@ -19,8 +19,8 @@ const {dev, prod} = require("./modules/env");
 // https://github.com/gulpjs/gulp/blob/master/docs/API.md
 
 gulp.task("tslint", () => {
-	return gulp.src("../src/**/*.ts")
-		.pipe(tslint(requireUncached("../src/tslint.json")))
+	return gulp.src("../src/ts/**/*.ts")
+		.pipe(tslint(requireUncached("../src/ts/tslint.json")))
 		.pipe(tslint.report());
 });
 
@@ -67,7 +67,7 @@ gulp.task("watch", () => {
 	gulp.watch([
 		"./webpack.config.js",
 		"./uglifyOptions.js",
-		"../src/**/*.ts", "../src/**/*.vue"
+		"../src/ts/**/*.ts", "../src/ts/**/*.vue"
 	], ["scripts"]);
 	gulp.watch(["!../static/manifest.js", "../static/**/*.js"], ["static-scripts"]);
 	gulp.watch("../static/**/*.html", ["html"]);

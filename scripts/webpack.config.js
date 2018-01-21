@@ -13,15 +13,15 @@ module.exports = {
 	entry: {
 		
 		// background
-		background: "./src/background/background.ts",
+		background: "./src/ts/background/background.ts",
 		
 		// options
-		scripts: "./src/options/scripts.ts",
-		xport: "./src/options/xport.ts",
-		editor: "./src/options/editor.ts",
+		scripts: "./src/ts/options/scripts.ts",
+		xport: "./src/ts/options/xport.ts",
+		editor: "./src/ts/options/editor.ts",
 		
 		// options but not really
-		syntaxCheckFrame: "./src/options/editor/syntaxCheckFrame.ts",
+		syntaxCheckFrame: "./src/ts/options/editor/syntaxCheckFrame.ts",
 	},
 	output: {
 		path: path.resolve(__dirname, "../dist/extension/js/"),
