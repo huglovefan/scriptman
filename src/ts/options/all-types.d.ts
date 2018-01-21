@@ -18,6 +18,7 @@ interface HTMLIFrameElement {
 	srcdoc: string;
 }
 
+// fixed in typescript 2.7
 interface HTMLCollection {
 	[Symbol.iterator] (): IterableIterator<Element>;
 }
