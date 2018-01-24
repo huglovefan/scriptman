@@ -61,7 +61,6 @@ module.exports = {
 		unsafe: true,
 		unsafe_arrows: true,
 		unsafe_comps: true,
-		unsafe_Func: true,
 		unsafe_math: true,
 		unsafe_methods: true,
 		unsafe_proto: true,
