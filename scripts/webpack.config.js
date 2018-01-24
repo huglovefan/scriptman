@@ -89,6 +89,9 @@ module.exports = {
 		new webpack.optimize.OccurrenceOrderPlugin(),
 		new webpack.optimize.AggressiveMergingPlugin(),
 		new webpack.optimize.ModuleConcatenationPlugin(),
-		new UglifyJsPlugin({uglifyOptions: require("./uglifyOptions.js")}),
+		new UglifyJsPlugin({
+			parallel: true,
+			uglifyOptions: require("./uglifyOptions.js"),
+		}),
 	],
 };
