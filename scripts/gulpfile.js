@@ -29,9 +29,10 @@ gulp.task("tslint", () => {
 gulp.task("scripts", (callback) => {
 	webpack(requireUncached("./webpack.config.js"), (err, stats) => {
 		if (err) {
-			throw new gutil.PluginError("webpack", err);
+			callback(err);
+			return;
 		}
-		gutil.log("[webpack]", stats.toString());
+		gutil.log("[webpack]", stats.toString({colors: true}));
 		callback();
 	});
 });
