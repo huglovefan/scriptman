@@ -26,7 +26,7 @@ gulp.task("tslint", () => {
 		.pipe(tslint.report());
 });
 
-gulp.task("scripts", (callback) => {
+gulp.task("webpack", (callback) => {
 	webpack(requireUncached("./webpack.config.js"), (err, stats) => {
 		if (err) {
 			callback(err);
@@ -71,7 +71,7 @@ gulp.task("watch", () => {
 		"./webpack.config.js",
 		"./uglifyOptions.js",
 		"../src/ts/**/*.ts", "../src/ts/**/*.vue"
-	], ["scripts"]);
+	], ["webpack"]);
 	gulp.watch(["!../static/manifest.js", "../static/**/*.js"], ["static-scripts"]);
 	gulp.watch("../static/**/*.html", ["html"]);
 	gulp.watch("../static/**/*.css", ["css"]);
@@ -79,7 +79,7 @@ gulp.task("watch", () => {
 });
 
 gulp.task("default", sequence(
-	["tslint", "scripts", "static-scripts", "html", "css", "manifest"],
+	["tslint", "webpack", "static-scripts", "html", "css", "manifest"],
 	...(dev ? ["watch"] : []),
 ));
 
