@@ -3,10 +3,10 @@
 //
 
 import {CHROME} from "../browser/browser";
-import createLazyObject from "../misc/createLazyObject";
-import DefaultWeakMap from "../misc/DefaultWeakMap";
-import entriesToObject from "../misc/entriesToObject";
-import isBackgroundPage from "../misc/isBackgroundPage";
+import {createLazyObject} from "../misc/createLazyObject";
+import {DefaultWeakMap} from "../misc/DefaultWeakMap";
+import {entriesToObject} from "../misc/entriesToObject";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
 
 console.assert(isBackgroundPage());
 
@@ -98,4 +98,4 @@ const fix = () => {
 	return <typeof chrome.webNavigation> <any> createLazyObject(chrome.webNavigation, entriesToObject(lazyEntries));
 };
 
-export default (CHROME) ? fix() : chrome.webNavigation;
+export const webNavigation = (CHROME) ? fix() : chrome.webNavigation;

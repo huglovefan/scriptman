@@ -1,7 +1,7 @@
 import {FIREFOX} from "../browser/browser";
-import hrefNoHash from "../misc/hrefNoHash";
-import isBackgroundPage from "../misc/isBackgroundPage";
-import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {hrefNoHash} from "../misc/hrefNoHash";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {ReadonlyURL} from "../misc/ReadonlyURL";
 
 console.assert(isBackgroundPage());
 

@@ -1,5 +1,5 @@
 // stolen from mozilla
-export default class DefaultWeakMap <K extends object, V> extends WeakMap<K, V> {
+export class DefaultWeakMap <K extends object, V> extends WeakMap<K, V> {
 	private readonly callback: (key: K) => V;
 	public constructor (callback: DefaultWeakMap<K, V>["callback"]) {
 		super();

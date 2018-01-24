@@ -1,5 +1,5 @@
-import isBackgroundPage from "../misc/isBackgroundPage";
-import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {ReadonlyURL} from "../misc/ReadonlyURL";
 import {AnySection, AnySectionInit, Section} from "./Section";
 
 console.assert(isBackgroundPage());

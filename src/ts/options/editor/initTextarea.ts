@@ -31,4 +31,6 @@ namespace initTextarea {
 	}
 }
 
-export default initTextarea.initTextarea;
+const initTextareaExport = initTextarea.initTextarea;
+
+export {initTextareaExport as initTextarea};

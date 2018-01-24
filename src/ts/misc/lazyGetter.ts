@@ -1,4 +1,4 @@
-export default <
+export const lazyGetter = <
 	K extends string,
 	V,
 	R extends {[key in K]?: any} // is this useful?

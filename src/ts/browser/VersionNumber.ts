@@ -1,6 +1,6 @@
-import escapeRegExp from "../misc/escapeRegExp";
+import {escapeRegExp} from "../misc/escapeRegExp";
 
-export default class VersionNumber {
+export class VersionNumber {
 	
 	public static parseUserAgent (product: string, userAgent = navigator.userAgent) {
 		const pattern = RegExp(

@@ -4,8 +4,8 @@
 
 import browser from "webextension-polyfill";
 import {ZalgoPromise} from "zalgo-promise";
-import entriesToObject from "../misc/entriesToObject";
-import isBackgroundPage from "../misc/isBackgroundPage";
+import {entriesToObject} from "../misc/entriesToObject";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
 import {BackgroundPageWindow} from "./background";
 import {Connector} from "./Connector";
 import {Script, ScriptInit} from "./Script";
@@ -229,6 +229,6 @@ namespace ScriptManager {
 
 type ScriptManager = typeof ScriptManager;
 
-export default ScriptManager;
+export {ScriptManager};
 
 (<BackgroundPageWindow> window).ScriptManager = ScriptManager;

@@ -1,4 +1,4 @@
-import ScriptManager from "../background/ScriptManager";
+import {ScriptManager} from "../background/ScriptManager";
 import {getScriptManager} from "./all";
 
 let ScriptManagerRemote: ScriptManager = <any> new Proxy({}, {
@@ -12,4 +12,4 @@ const scriptManagerPromise = getScriptManager().then((scriptManager) => {
 	return scriptManager;
 });
 
-export default ScriptManagerRemote;
+export {ScriptManagerRemote as ScriptManager};

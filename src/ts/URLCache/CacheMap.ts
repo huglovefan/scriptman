@@ -13,7 +13,7 @@ const defaultOptions: Readonly<CacheMapOptions> = {
 	timeToLive: 1000,
 };
 
-export default class CacheMap <K, V> {
+export class CacheMap <K, V> {
 	
 	private static getOption <K extends keyof CacheMapOptions>
 	(options: Partial<CacheMapOptions> | undefined, key: K): CacheMapOptions[K] {

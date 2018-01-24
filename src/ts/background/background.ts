@@ -1,6 +1,6 @@
-import isBackgroundPage from "../misc/isBackgroundPage";
-import BadgeManager from "./BadgeManager";
-import ScriptManager from "./ScriptManager";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {BadgeManager} from "./BadgeManager";
+import {ScriptManager} from "./ScriptManager";
 
 console.assert(isBackgroundPage());
 

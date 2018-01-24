@@ -1,5 +1,5 @@
-import isPrimitive from "./isPrimitive";
+import {isPrimitive} from "./isPrimitive";
 
-export default function isPlainObject (x: any) {
+export function isPlainObject (x: any) {
 	return !isPrimitive(x) && Object.getPrototypeOf(x) === Object.prototype;
 }

@@ -32,16 +32,16 @@
 </template>
 
 <script lang="ts">
-	import ScriptManager from "./scriptManagerRemote";
+	import {ScriptManager} from "./scriptManagerRemote";
 	import browser from "webextension-polyfill";
-	import hrefNoHash from "../misc/hrefNoHash";
-	import escapeRegExp from "../misc/escapeRegExp";
-	import entriesToObject from "../misc/entriesToObject";
-	import canRunScripts from "../misc/canRunScripts";
+	import {hrefNoHash} from "../misc/hrefNoHash";
+	import {escapeRegExp} from "../misc/escapeRegExp";
+	import {entriesToObject} from "../misc/entriesToObject";
+	import {canRunScripts} from "../misc/canRunScripts";
 	import {Script} from "../background/Script";
-	import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
+	import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
 	import {createElement} from "./all";
-	import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+	import {ReadonlyURL} from "../misc/ReadonlyURL";
 	
 	const isPopup = (() => {
 		const params = new URLSearchParams(location.search);

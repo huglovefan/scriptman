@@ -1,4 +1,4 @@
-export default <
+export const mapObject = <
 	K extends string,
 	V1,
 	V2

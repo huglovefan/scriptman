@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 import {ZalgoPromise} from "zalgo-promise";
-import isBackgroundPage from "../misc/isBackgroundPage";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
 
 console.assert(isBackgroundPage());
 

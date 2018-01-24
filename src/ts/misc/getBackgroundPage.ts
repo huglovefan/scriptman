@@ -5,11 +5,11 @@
 import browser from "webextension-polyfill";
 import {ZalgoPromise} from "zalgo-promise";
 import {BackgroundPageWindow} from "../background/background";
-import BadgeManager from "../background/BadgeManager";
-import ScriptManager from "../background/ScriptManager";
-import isBackgroundPage from "./isBackgroundPage";
+import {BadgeManager} from "../background/BadgeManager";
+import {ScriptManager} from "../background/ScriptManager";
+import {isBackgroundPage} from "./isBackgroundPage";
 
-export default function getBackgroundPage () {
+export function getBackgroundPage () {
 	const win = window;
 	if (isBackgroundPage(win)) {
 		console.log("[getBackgroundPage] we're the background page");

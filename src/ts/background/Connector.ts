@@ -1,10 +1,10 @@
 import {FIREFOX} from "../browser/browser";
-import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
-import isBackgroundPage from "../misc/isBackgroundPage";
-import URLCache from "../URLCache/URLCache";
-import ScriptManager from "./ScriptManager";
+import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {URLCache} from "../URLCache/URLCache";
+import {ScriptManager} from "./ScriptManager";
 import {AnySection, Section} from "./Section";
-import webNavigation from "./webNavigation";
+import {webNavigation} from "./webNavigation";
 
 console.assert(isBackgroundPage());
 

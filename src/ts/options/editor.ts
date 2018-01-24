@@ -1,4 +1,4 @@
-import Editor from "./editor/Editor";
+import {Editor} from "./editor/Editor";
 import {SyntaxCheckOptions} from "./editor/syntaxCheck";
 
 export const syntaxCheckOptions: SyntaxCheckOptions = {

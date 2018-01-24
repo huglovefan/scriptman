@@ -1,4 +1,4 @@
-export default function lazy <T extends any> (callback: () => T) {
+export function lazy <T extends any> (callback: () => T) {
 	let done = false;
 	let value: T;
 	return () => {

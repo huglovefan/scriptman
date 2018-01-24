@@ -2,6 +2,6 @@
 // gets the current extension id
 //
 
-import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {ReadonlyURL} from "./ReadonlyURL";
 
-export default new ReadonlyURL(chrome.runtime.getURL(".")).hostname;
+export const thisExtensionId = new ReadonlyURL(chrome.runtime.getURL(".")).hostname;

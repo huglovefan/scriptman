@@ -2,14 +2,14 @@
 // singleton for managing the browser action badge for tabs
 //
 
-import FRAME_ID_TOP from "../misc/FRAME_ID_TOP";
-import isBackgroundPage from "../misc/isBackgroundPage";
+import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
 import {Script} from "./Script";
-import webNavigation from "./webNavigation";
+import {webNavigation} from "./webNavigation";
 
 console.assert(isBackgroundPage());
 
-class BadgeManager {
+export class BadgeManager {
 	
 	private readonly tabScripts = new Map<number, Set<Script>>();
 	
@@ -121,5 +121,3 @@ class BadgeManager {
 		this.tabUpdateBadge(tabId);
 	}
 }
-
-export default BadgeManager;

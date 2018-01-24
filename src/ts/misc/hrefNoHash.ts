@@ -2,9 +2,9 @@
 // gets the ".href" of a url without the hash or fragment identifier
 //
 
-import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {ReadonlyURL} from "./ReadonlyURL";
 
-export default function hrefNoHash (url: ReadonlyURL) {
+export function hrefNoHash (url: ReadonlyURL) {
 	if (url.hash === "") {
 		return url.href;
 	}

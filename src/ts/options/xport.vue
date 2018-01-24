@@ -12,8 +12,8 @@
 
 <script lang="ts">
 	import browser from "webextension-polyfill";
-	import ScriptManager from "./scriptManagerRemote";
-	import isPlainObject from "../misc/isPlainObject";
+	import {ScriptManager} from "./scriptManagerRemote";
+	import {isPlainObject} from "../misc/isPlainObject";
 	export default {
 		data: function () {
 			return {

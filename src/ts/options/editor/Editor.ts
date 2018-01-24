@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import {ScriptInit} from "../../background/Script";
 import {AnySectionInit} from "../../background/Section";
-import isPlainObject from "../../misc/isPlainObject";
+import {isPlainObject} from "../../misc/isPlainObject";
 import {documentLoaded, select, selectAll} from "../all";
 import {SectionForm, SectionFormElement} from "./SectionForm";
 
@@ -226,4 +226,6 @@ namespace Editor {
 	
 }
 
-export default Editor.Editor;
+const EditorClass = Editor.Editor;
+
+export {EditorClass as Editor};

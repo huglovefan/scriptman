@@ -5,10 +5,10 @@
 // i'm unsure about how things will work when the list is empty and if i'm handling it right
 //
 
-import ReadonlyURL from "../ReadonlyURL/ReadonlyURL";
+import {ReadonlyURL} from "../misc/ReadonlyURL";
 import {AnyMatch} from "./Match";
 
-export default class MatchList {
+export class MatchList {
 	
 	private readonly matches: ReadonlyArray<AnyMatch>;
 	private readonly defaultValue: boolean;

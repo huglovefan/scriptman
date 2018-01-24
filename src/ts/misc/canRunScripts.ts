@@ -4,7 +4,7 @@
 
 import browser from "webextension-polyfill";
 import {ZalgoPromise} from "zalgo-promise";
-import FRAME_ID_TOP from "./FRAME_ID_TOP";
+import {FRAME_ID_TOP} from "./FRAME_ID_TOP";
 import {getBadgeManager} from "./getBackgroundPage";
 
 // the badge manager counts injections in the top frame,
@@ -38,7 +38,7 @@ function checkWithExecuteScript (tabId: number, frameId = FRAME_ID_TOP) {
 	});
 }
 
-export default function canRunScripts (tabId: number, frameId = FRAME_ID_TOP) {
+export function canRunScripts (tabId: number, frameId = FRAME_ID_TOP) {
 	if (frameId === FRAME_ID_TOP) {
 		checkWithBadgeManager(tabId, frameId).then((result) => {
 			if (result !== null) return result;
