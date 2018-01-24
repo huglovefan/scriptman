@@ -15,15 +15,15 @@ module.exports = {
 	entry: {
 		
 		// background
-		background: "./src/ts/background/background.ts",
+		background: "../src/ts/background/background.ts",
 		
 		// options
-		scripts: "./src/ts/options/scripts.ts",
-		xport: "./src/ts/options/xport.ts",
-		editor: "./src/ts/options/editor.ts",
+		scripts: "../src/ts/options/scripts.ts",
+		xport: "../src/ts/options/xport.ts",
+		editor: "../src/ts/options/editor.ts",
 		
 		// options but not really
-		syntaxCheckFrame: "./src/ts/options/editor/syntaxCheckFrame.ts",
+		syntaxCheckFrame: "../src/ts/options/editor/syntaxCheckFrame.ts",
 	},
 	output: {
 		path: path.resolve(__dirname, "../dist/extension/js/"),
@@ -64,7 +64,6 @@ module.exports = {
 	performance: {
 		hints: "warning",
 	},
-	context: path.resolve(__dirname, ".."),
 	target: "web",
 	stats: {
 		all: true,
