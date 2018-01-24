@@ -7,6 +7,8 @@ const CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const webpack = require("webpack");
 
+const requireUncached = require("require-uncached");
+
 const {dev, prod} = require("./env");
 
 // https://webpack.js.org/configuration/
@@ -92,7 +94,7 @@ module.exports = {
 		new webpack.optimize.ModuleConcatenationPlugin(),
 		new UglifyJsPlugin({
 			parallel: true,
-			uglifyOptions: require("./uglifyOptions.js"),
+			uglifyOptions: requireUncached("./uglifyOptions.js"),
 		}),
 	],
 };
