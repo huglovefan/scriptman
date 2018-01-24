@@ -1,5 +1,7 @@
 "use strict";
 
+{
+
 const gulp = require("gulp");
 const gutil = require("gulp-util");
 const webpack = require("webpack");
@@ -14,7 +16,7 @@ const sequence = require("gulp-sequence");
 const fs = require("fs");
 const requireUncached = require("require-uncached");
 
-const {dev, prod} = require("./modules/env");
+const {dev, prod} = require("./env");
 
 // https://github.com/gulpjs/gulp/blob/master/docs/API.md
 
@@ -85,3 +87,5 @@ gulp.task("zip", () => {
 		.pipe(zip("extension.zip"))
 		.pipe(gulp.dest("../dist/"));
 });
+
+}

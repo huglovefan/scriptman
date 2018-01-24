@@ -1,10 +1,12 @@
 "use strict";
 
+{
+
 const npmPackage = require("../package.json");
 
 console.assert(npmPackage);
 
-const {dev, prod} = require("../scripts/modules/env");
+const {dev, prod} = require("../scripts/env");
 
 const nameSuffix = (dev) ? " (dev)" : "";
 
@@ -49,3 +51,5 @@ module.exports = {
 	// required for syntax checking
 	content_security_policy: "script-src 'self' blob:; object-src 'self'",
 };
+
+}

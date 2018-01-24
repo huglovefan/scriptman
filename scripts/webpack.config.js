@@ -1,11 +1,13 @@
 "use strict";
 
+{
+
 const path = require("path");
 const CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const webpack = require("webpack");
 
-const {dev, prod} = require("./modules/env");
+const {dev, prod} = require("./env");
 
 // https://webpack.js.org/configuration/
 
@@ -95,3 +97,5 @@ module.exports = {
 		}),
 	],
 };
+
+}

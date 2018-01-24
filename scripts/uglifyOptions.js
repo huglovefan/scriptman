@@ -1,6 +1,8 @@
 "use strict";
 
-const {dev, prod} = require("./modules/env");
+{
+
+const {dev, prod} = require("./env");
 
 // https://github.com/mishoo/UglifyJS2/tree/harmony#api-reference
 
@@ -112,3 +114,5 @@ module.exports = {
 	keep_fnames: false,
 	//safari10: false,
 };
+
+}

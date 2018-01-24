@@ -1,5 +1,7 @@
 "use strict";
 
+{
+
 const env = process.env.NODE_ENV;
 
 const dev = env === "development";
@@ -10,3 +12,5 @@ if (!dev && !prod) {
 }
 
 module.exports = {dev, prod};
+
+}
