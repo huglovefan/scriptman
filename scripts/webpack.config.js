@@ -66,7 +66,7 @@ module.exports = {
 	},
 	target: "web",
 	stats: {
-		all: true,
+		optimizationBailout: true,
 	},
 	plugins: [
 		new webpack.EnvironmentPlugin(["NODE_ENV"]),

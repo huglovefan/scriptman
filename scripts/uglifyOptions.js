@@ -66,7 +66,7 @@ module.exports = {
 		unsafe_proto: true,
 		unsafe_regexp: true,
 		unused: true,
-		warnings: true,
+		warnings: false,
 	},
 	mangle: dev ? false :  {
 		eval: true,
