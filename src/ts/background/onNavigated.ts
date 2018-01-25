@@ -2,6 +2,7 @@ import {CHROME, FIREFOX} from "../browser/browser";
 import {Event} from "../misc/Event";
 import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
 import {ReadonlyURL} from "../misc/ReadonlyURL";
+import {snapshot} from "./snapshot";
 
 export type NavigationDetails = Readonly<{
 	tabId: number,
@@ -49,3 +50,15 @@ export const onNavigated = (() => {
 	}
 	return event;
 })();
+
+export const dispatchOldNavigations = async () => {
+	const {tabs, frames} = await snapshot();
+	for (const tab of tabs) {
+		const tabId = tab.id!;
+		for (const frame of frames[tabId]) {
+			const frameId = frame.frameId;
+			const url = new ReadonlyURL(frame.url);
+			onNavigated.dispatch({tabId, frameId, url});
+		}
+	}
+};

@@ -1,5 +1,8 @@
 import {ScriptManager} from "../background/ScriptManager";
+import {isBackgroundPage} from "../misc/isBackgroundPage";
 import {getScriptManager} from "./all";
+
+console.assert(!isBackgroundPage());
 
 let ScriptManagerRemote: ScriptManager = <any> new Proxy({}, {
 	get: (_target, property, _receiver) =>

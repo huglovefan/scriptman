@@ -12,7 +12,7 @@ export type SectionFormElement = HTMLFieldSetElement;
 
 export namespace SectionForm {
 	
-	/* tslint:disable only-arrow-functions */
+	// tslint:disable only-arrow-functions
 	declare function select (selector: "template#sectionTemplate", scope: Document): HTMLTemplateElement;
 	declare function select (selector: "select[name=sectionType]", scope: SectionFormElement): HTMLSelectElement;
 	declare function select (selector: "select[name=sectionRunAt]", scope: SectionFormElement): HTMLSelectElement;
@@ -27,7 +27,7 @@ export namespace SectionForm {
 	declare function select (selector: "button[name=addExclude]", scope: SectionFormElement): HTMLButtonElement;
 	declare function select (selector: "div[name=excludeArea]", scope: SectionFormElement): HTMLDivElement;
 	declare function select (selector: "summary.excludes", scope: SectionFormElement): HTMLElement;
-	/* tslint:enable only-arrow-functions */
+	// tslint:enable only-arrow-functions
 	
 	const clone = () => {
 		return <SectionFormElement>
@@ -74,7 +74,7 @@ export namespace SectionForm {
 		const result: Partial<AnySectionInit> = {};
 		result.type = <AnySectionInit["type"]> select("select[name=sectionType]", section).value;
 		if (result.type === "js") {
-			result.runAt = <JsSection.CamelCaseRunAt> select("select[name=sectionRunAt]", section).value;
+			result.runAt = <JsSection.RunAt> select("select[name=sectionRunAt]", section).value;
 			result.context = <JsSection.Context> select("select[name=sectionContext]", section).value;
 		} else if (result.type === "css") {
 			result.cssOrigin = <CssSection.CssOrigin> select("select[name=sectionCssOrigin]", section).value;

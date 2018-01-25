@@ -1,4 +1,4 @@
-export interface ReadonlyURLSearchParams {
+interface ReadonlyURLSearchParams {
 	entries (): IterableIterator<[string, string]>;
 	get (name: string): string | null;
 	getAll (name: string): string[];
@@ -8,6 +8,11 @@ export interface ReadonlyURLSearchParams {
 	values (): IterableIterator<string>;
 	[Symbol.iterator]: ReadonlyURLSearchParams["entries"];
 }
+
+const ReadonlyURLSearchParams: {
+	prototype: ReadonlyURLSearchParams;
+	new (init?: string | ReadonlyURLSearchParams): ReadonlyURLSearchParams;
+} = URLSearchParams;
 
 interface ReadonlyURL {
 	readonly hash: string;
@@ -26,8 +31,8 @@ interface ReadonlyURL {
 }
 
 const ReadonlyURL: {
-	new (url: string, base?: string): ReadonlyURL;
 	prototype: ReadonlyURL;
-} = <any> URL;
+	new (url: string, base?: string): ReadonlyURL;
+} = URL;
 
-export {ReadonlyURL};
+export {ReadonlyURL, ReadonlyURLSearchParams};

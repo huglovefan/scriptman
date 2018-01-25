@@ -8,12 +8,12 @@ export type MatchFormElement = HTMLDivElement;
 
 export namespace MatchForm {
 	
-	/* tslint:disable only-arrow-functions */
+	// tslint:disable only-arrow-functions
 	declare function select (selector: "template#matchTemplate", scope: Document): HTMLTemplateElement;
 	declare function select (selector: "select[name=matchType]", scope: MatchFormElement): HTMLSelectElement;
 	declare function select (selector: "input[name=matchValue]", scope: MatchFormElement): HTMLInputElement;
 	declare function select (selector: "button[name=removeMatch]", scope: MatchFormElement): HTMLButtonElement;
-	/* tslint:enable only-arrow-functions */
+	// tslint:enable only-arrow-functions
 	
 	const clone = () => {
 		return <MatchFormElement>

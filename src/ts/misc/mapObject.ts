@@ -7,11 +7,8 @@ export const mapObject = <
 	callback: (key: K, value: V1) => V2
 ) => {
 	const result = <{[key in K]: V2}> {};
-	for (const k1 in object) {
-		if (!Object.prototype.hasOwnProperty.call(object, k1)) {
-			continue;
-		}
-		result[k1] = callback(k1, object[k1]);
+	for (const [k, v1] of <[K, V1][]> Object.entries(object)) {
+		result[k] = callback(k, v1);
 	}
 	return result;
 };

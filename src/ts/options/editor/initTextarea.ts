@@ -6,9 +6,9 @@ import {syntaxCheck} from "./syntaxCheck";
 select; // not unused
 
 namespace initTextarea {
-	/* tslint:disable only-arrow-functions */
+	// tslint:disable only-arrow-functions
 	declare function select (selector: "button[name=saveScript]", scope: Document): HTMLButtonElement;
-	/* tslint:enable only-arrow-functions */
+	// tslint:enable only-arrow-functions
 	export const initTextarea = (textarea: HTMLTextAreaElement, section: SectionFormElement) => {
 		textarea.addEventListener("keydown", (event) => {
 			if (event.key === "c" && event.altKey && !event.ctrlKey && SectionForm.getType(section) === "js") {

@@ -25,4 +25,13 @@ export class Script {
 	public test (url: ReadonlyURL) {
 		return this.sections.some((section) => section.test(url));
 	}
+	
+	public disconnect () {
+		if (!this.enabled) {
+			return;
+		}
+		for (const section of this.sections) {
+			section.disconnect();
+		}
+	}
 }

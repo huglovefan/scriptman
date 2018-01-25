@@ -1,123 +1,93 @@
-//
-// singleton for managing the browser action badge for tabs
-//
-
+import {DefaultMap} from "../misc/DefaultMap";
 import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
-import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {NavigationDetails, onNavigated} from "./onNavigated";
 import {Script} from "./Script";
-import {webNavigation} from "./webNavigation";
+import {ScriptStore, ScriptStoreEventDetail} from "./ScriptStore";
+import {Section} from "./Section";
 
-console.assert(isBackgroundPage());
+const isEventForEnabledScript = ({script: {enabled}}: ScriptStoreEventDetail) => {
+	return enabled;
+};
+
+const isTopFrameEvent = ({frameId}: {frameId: number}) => {
+	return frameId === FRAME_ID_TOP;
+};
 
 export class BadgeManager {
-	
-	private readonly tabScripts = new Map<number, Set<Script>>();
-	
-	public constructor () {
-		this.onNavigationCommitted = this.onNavigationCommitted.bind(this);
+	private readonly tabScripts: DefaultMap<number, Set<Script>>;
+	public constructor (scriptStore: ScriptStore) {
+		if (scriptStore.ready) {
+			console.error("BadgeManager: the ScriptStore has already loaded");
+		}
+		this.onNavigated = this.onNavigated.bind(this);
 		this.onTabRemoved = this.onTabRemoved.bind(this);
-		
-		webNavigation.onCommitted.addListener(this.onNavigationCommitted);
-		chrome.tabs.onRemoved.addListener(this.onTabRemoved);
-		window.addEventListener("sectioninjected", (e) => {
-			if (e.detail.frameId === FRAME_ID_TOP) {
-				this.injectedScript(e.detail.section.script, e.detail.tabId);
-			}
-		});
-		window.addEventListener("sectioninjectionremoved", (e) => {
-			if (e.detail.frameId === FRAME_ID_TOP) {
-				this.removedScript(e.detail.section.script, e.detail.tabId);
-			}
-		});
+		this.registerScript = this.registerScript.bind(this);
+		this.unregisterScript = this.unregisterScript.bind(this);
+		this.tabScripts = new DefaultMap(() => new Set());
+		onNavigated
+			.filter(isTopFrameEvent)
+			.addListener(this.onNavigated);
+		chrome.tabs.onRemoved
+			.addListener(this.onTabRemoved);
+		scriptStore.onScriptAdded
+			.filter(isEventForEnabledScript)
+			.addListener(this.registerScript);
+		scriptStore.onScriptRemoved
+			.filter(isEventForEnabledScript)
+			.addListener(this.unregisterScript);
 	}
-	
 	public tabHasScripts (tabId: number) {
-		return (this.tabGetCount(tabId) !== 0);
+		return (
+			this.tabScripts.has(tabId) &&
+			this.tabScripts.get(tabId)!.size !== 0
+		);
 	}
-	
-	private onNavigationCommitted (details: chrome.webNavigation.WebNavigationTransitionCallbackDetails) {
-		if (details.frameId !== FRAME_ID_TOP) {
-			return;
-		}
-		this.tabClearScripts(details.tabId);
-		this.tabUpdateBadge(details.tabId);
-	}
-	
-	private onTabRemoved (tabId: number) {
-		this.tabClearScripts(tabId, true);
-	}
-	
-	/**
-	 * clears the scripts injected for a tab, optionally deleting the backing map
-	 */
-	private tabClearScripts (tabId: number, deleteMap = false) {
-		const scripts = this.tabScripts.get(tabId);
-		if (scripts !== void 0) {
-			if (deleteMap) {
-				this.tabScripts.delete(tabId);
-			} else {
-				scripts.clear();
-			}
+	private registerScript ({script}: ScriptStoreEventDetail) {
+		console.assert(script.enabled);
+		for (const section of script.sections) {
+			const injection = section.injection;
+			injection.onInjected
+				.filter(isTopFrameEvent)
+				.addListener(({tabId}) => this.onSectionInjected(section, tabId));
+			injection.onRemoved
+				.filter(isTopFrameEvent)
+				.addListener(({tabId}) => this.onSectionRemoved(section, tabId));
 		}
 	}
-	
-	private tabAddScript (tabId: number, script: Script) {
-		const scripts = this.tabScripts.get(tabId);
-		if (scripts !== void 0) {
-			scripts.add(script);
-		} else {
-			const set = new Set();
-			set.add(script);
-			this.tabScripts.set(tabId, set);
+	private unregisterScript ({script}: ScriptStoreEventDetail) {
+		console.assert(script.enabled);
+		for (const [tabId, tabScripts] of this.tabScripts) {
+			tabScripts.delete(script);
+			// replace with a "dummy" to keep the count?
+			this.deleteSetIfEmpty(tabId);
 		}
 	}
-	private tabRemoveScript (tabId: number, script: Script) {
-		const scripts = this.tabScripts.get(tabId);
-		if (scripts === void 0) {
-			return;
+	private onSectionInjected (section: Section, tabId: number) {
+		this.tabScripts.get(tabId).add(section.script);
+		this.updateBadgeForTab(tabId);
+	}
+	private onSectionRemoved (section: Section, tabId: number) {
+		this.tabScripts.get(tabId).delete(section.script);
+		this.updateBadgeForTab(tabId);
+	}
+	private deleteSetIfEmpty (tabId: number) {
+		if (this.tabScripts.get(tabId).size === 0) {
+			this.tabScripts.delete(tabId);
 		}
-		scripts.delete(script);
 	}
-	
-	/**
-	 * if a section of a script has been ran in a specific tab
-	 */
-	private tabHasScript (tabId: number, script: Script) {
-		const scripts = this.tabScripts.get(tabId);
-		return (scripts !== void 0) ? scripts.has(script) : false;
-	}
-	
-	/**
-	 * gets the number of scripts injected in the top frame of a tab
-	 */
-	private tabGetCount (tabId: number) {
-		const scripts = this.tabScripts.get(tabId);
-		return (scripts !== void 0) ? scripts.size : 0;
-	}
-	
-	/**
-	 * updates the badge for a specific tab
-	 */
-	private tabUpdateBadge (tabId: number) {
-		const count = this.tabGetCount(tabId);
+	private updateBadgeForTab (tabId: number) {
 		chrome.browserAction.setBadgeText({
-			text: (count !== 0) ? String(count) : "",
-			tabId: tabId,
+			tabId,
+			text: String(this.tabScripts.get(tabId).size),
 		});
+		this.deleteSetIfEmpty(tabId);
 	}
-	
-	private injectedScript (script: Script, tabId: number) {
-		if (this.tabHasScript(tabId, script)) {
-			return;
-		}
-		this.tabAddScript(tabId, script);
-		this.tabUpdateBadge(tabId);
+	private onNavigated (details: NavigationDetails) {
+		console.assert(details.frameId === FRAME_ID_TOP);
+		this.onTabRemoved(details.tabId);
 	}
-	private removedScript (script: Script, tabId: number) {
-		if (!this.tabHasScript(tabId, script)) {
-			return;
-		}
-		this.tabRemoveScript(tabId, script);
-		this.tabUpdateBadge(tabId);
+	private onTabRemoved (tabId: number) {
+		this.tabScripts.get(tabId).clear();
+		this.deleteSetIfEmpty(tabId);
 	}
 }

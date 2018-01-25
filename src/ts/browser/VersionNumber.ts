@@ -17,7 +17,7 @@ export class VersionNumber {
 		return new VersionNumber(s.split(".").map(Number));
 	}
 	
-	private numbers: number[];
+	private readonly numbers: number[];
 	
 	public constructor (numbers: number[]) {
 		this.numbers = numbers;
@@ -32,11 +32,7 @@ export class VersionNumber {
 		return 0;
 	}
 	
-	public isNewerThan (numbers: number[]) {
-		return this.compare(numbers) === 1;
-	}
-	
-	public isOlderThan (numbers: number[]) {
-		return this.compare(numbers) === -1;
+	public equalOrNewer (numbers: number[]) {
+		return this.compare(numbers) !== -1;
 	}
 }

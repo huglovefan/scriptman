@@ -1,5 +1,3 @@
-import {isPrimitive} from "./isPrimitive";
-
 export const isPlainObject = (x: any) => {
-	return !isPrimitive(x) && Object.getPrototypeOf(x) === Object.prototype;
+	return x != null && Object.getPrototypeOf(x) === Object.prototype;
 };

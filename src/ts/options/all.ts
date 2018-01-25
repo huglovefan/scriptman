@@ -10,7 +10,7 @@ export const select = (selector: string, scope: NodeSelector) => {
 	return <never> result;
 };
 
-/* tslint:disable only-arrow-functions */
+// tslint:disable only-arrow-functions
 export function selectAll
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: T, scope: NodeSelector):
@@ -25,9 +25,9 @@ export function selectAll (selector: string, scope: NodeSelector) {
 	const result = scope.querySelectorAll(selector);
 	return <NodeListOf<HTMLElement>> result;
 }
-/* tslint:enable only-arrow-functions */
+// tslint:enable only-arrow-functions
 
-/* tslint:disable only-arrow-functions */
+// tslint:disable only-arrow-functions
 export function createElement
 	<T extends keyof HTMLElementTagNameMap>
 	(tagName: T, properties: object | null, ...children: (string | Node)[]):
@@ -39,7 +39,7 @@ export function createElement (tagName: string, properties: object | null = null
 	if (children.length !== 0) element.append(...children);
 	return element;
 }
-/* tslint:enable only-arrow-functions */
+// tslint:enable only-arrow-functions
 
 export {getScriptManager};
 

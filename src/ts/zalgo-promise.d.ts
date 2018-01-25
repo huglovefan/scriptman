@@ -31,7 +31,7 @@ declare module "zalgo-promise" {
 		
 		public dispatch (): void;
 		
-		// should be assignable to PromiseLike
+		// should be compatible with PromiseLike
 		public then <X = R, Y = never> (
 			onSuccess?: ((result: R) => (X | PromiseLike<X>)) | null,
 			onError?: ((error: any) => (Y | PromiseLike<Y>)) | null
