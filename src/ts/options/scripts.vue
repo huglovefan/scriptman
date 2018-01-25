@@ -42,6 +42,7 @@
 	import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
 	import {createElement} from "./all";
 	import {ReadonlyURL} from "../misc/ReadonlyURL";
+	import {returnTrue} from "../misc/returnConstants";
 	
 	const isPopup = (() => {
 		const params = new URLSearchParams(location.search);
@@ -75,6 +76,22 @@
 		ScriptManager.getAll()
 			.then(entries => entriesToObject([...entries]));
 	
+	const getSearchPredicate = (type: string, value: string) => {
+		if (type === "name") {
+			const pattern =
+				value.split(/\s+/)
+					.map((w: string) => `(?=.*?${escapeRegExp(w)})`)
+					.join("");
+			const re = RegExp(pattern, "ui");
+			return (script: Script) => re.test(script.name);
+		}
+		if (type === "url") {
+			const url = new ReadonlyURL(value);
+			return (script: Script) => script.test(url);
+		}
+		throw new Error(`Unknown filter type ${type}`);
+	};
+	
 	export default {
 		data () {
 			return {
@@ -84,6 +101,7 @@
 				searchType: isPopup ? "url" : "name",
 				searchURL: null,
 				searchRegex: null,
+				searchPredicate: returnTrue,
 				searchPlaceholders: {
 					name: "my cool script",
 					url: "https://example.org/",
@@ -123,40 +141,15 @@
 			},
 			updateSearch (this: any) {
 				this.hasVisibleScripts = false;
-				switch (this.searchType) {
-					case "url":
-						if (!this.search) {
-							this.searchURL = null;
-							break;
-						}
-						try {
-							this.searchURL = new URL(this.search);
-						} catch (error) {
-							this.searchURL = null;
-							// todo: show an error message
-						}
-						break;
-					case "name":
-						try {
-							this.searchRegex = RegExp(
-								this.search.split(/\s+/)
-									.map((w: string) => `(?=.*?${escapeRegExp(w)})`)
-									.join("")
-							, "ui");
-						} catch (error) {
-							this.searchRegex = null;
-							// todo: show an error message
-						}
-						break;
+				try {
+					this.searchPredicate = getSearchPredicate(this.searchType, this.search);
+				} catch (error) {
+					this.searchPredicate = returnTrue;
+					// todo: show an error message
 				}
 			},
 			shouldShowScript (this: any, script: Script) {
-				const result =
-					(this.searchType === "url") ?
-						(!this.searchURL || script.test(this.searchURL)) :
-					(this.searchType === "name") ?
-						(!this.searchRegex || this.searchRegex.test(script.name)) :
-					true;
+				const result = this.searchPredicate(script);
 				if (result) {
 					this.hasVisibleScripts = true;
 				}
