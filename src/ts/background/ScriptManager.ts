@@ -92,7 +92,7 @@ namespace ScriptManager {
 		// inject scripts to existing tabs on browser startup
 		chrome.runtime.onStartup.addListener(() => {
 			ZalgoPromise.all([getSnapshot(), loaded]).then(([snapshotData]) => {
-				for (const [_section, connector] of connectors) {
+				for (const connector of connectors.values()) {
 					connector.startupInject(snapshotData);
 				}
 			});
