@@ -10,10 +10,11 @@ selectAll; // not unused
 
 namespace Editor {
 	
-	function setTitle (s: string) {
+	const setTitle = (s: string) => {
 		document.title = s + " - scriptman";
-	}
+	};
 	
+	/* tslint:disable only-arrow-functions */
 	declare function select (selector: "input[name=scriptName]", scope: Document): HTMLInputElement;
 	declare function select (selector: "input[name=scriptEnabled]", scope: Document): HTMLInputElement;
 	declare function select (selector: "button[name=addSection]", scope: Document): HTMLButtonElement;
@@ -26,6 +27,7 @@ namespace Editor {
 	
 	declare function selectAll (selector: string, scope: NodeSelector): HTMLElement[];
 	declare function selectAll (selector: "fieldset.section", scope: Document): SectionFormElement[];
+	/* tslint:enable only-arrow-functions */
 	
 	export abstract class Editor {
 		

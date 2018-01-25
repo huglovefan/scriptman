@@ -9,7 +9,7 @@ import {BadgeManager} from "../background/BadgeManager";
 import {ScriptManager} from "../background/ScriptManager";
 import {isBackgroundPage} from "./isBackgroundPage";
 
-export function getBackgroundPage () {
+export const getBackgroundPage = () => {
 	const win = window;
 	if (isBackgroundPage(win)) {
 		console.log("[getBackgroundPage] we're the background page");
@@ -24,7 +24,7 @@ export function getBackgroundPage () {
 			resolve(backgroundPage);
 		}, reject);
 	});
-}
+};
 
 // just have them here as non-optional to fix the return type of getThing
 interface ThingsToGet extends BackgroundPageWindow {

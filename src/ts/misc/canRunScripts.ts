@@ -9,7 +9,7 @@ import {getBadgeManager} from "./getBackgroundPage";
 
 // the badge manager counts injections in the top frame,
 // so we can use it to check if scripts have been injected into it
-function checkWithBadgeManager (tabId: number, frameId = FRAME_ID_TOP) {
+const checkWithBadgeManager = (tabId: number, frameId = FRAME_ID_TOP) => {
 	if (frameId !== FRAME_ID_TOP) {
 		return ZalgoPromise.resolve(null);
 	}
@@ -20,9 +20,9 @@ function checkWithBadgeManager (tabId: number, frameId = FRAME_ID_TOP) {
 		}
 		return null;
 	});
-}
+};
 
-function checkWithExecuteScript (tabId: number, frameId = FRAME_ID_TOP) {
+const checkWithExecuteScript = (tabId: number, frameId = FRAME_ID_TOP) => {
 	return new ZalgoPromise<boolean>((resolve) => {
 		browser.tabs.executeScript(tabId, {
 			allFrames: false,
@@ -36,9 +36,9 @@ function checkWithExecuteScript (tabId: number, frameId = FRAME_ID_TOP) {
 			resolve(false);
 		});
 	});
-}
+};
 
-export function canRunScripts (tabId: number, frameId = FRAME_ID_TOP) {
+export const canRunScripts = (tabId: number, frameId = FRAME_ID_TOP) => {
 	if (frameId === FRAME_ID_TOP) {
 		checkWithBadgeManager(tabId, frameId).then((result) => {
 			if (result !== null) return result;
@@ -46,4 +46,4 @@ export function canRunScripts (tabId: number, frameId = FRAME_ID_TOP) {
 		});
 	}
 	return checkWithExecuteScript(tabId, frameId);
-}
+};

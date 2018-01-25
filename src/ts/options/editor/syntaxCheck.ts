@@ -15,7 +15,7 @@ export type SyntaxCheckOptions = {
 	wrapFunction?: "arrow" | "normal",
 };
 
-export function syntaxCheck (code: string, options?: SyntaxCheckOptions) {
+export const syntaxCheck = (code: string, options?: SyntaxCheckOptions) => {
 	
 	const iframe = document.createElement("iframe");
 	iframe.srcdoc = `<script src="../js/syntaxCheckFrame.js"></script>`;
@@ -53,4 +53,4 @@ export function syntaxCheck (code: string, options?: SyntaxCheckOptions) {
 		
 		document.documentElement.append(iframe);
 	});
-}
+};

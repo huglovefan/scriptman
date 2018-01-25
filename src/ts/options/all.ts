@@ -1,15 +1,16 @@
 import {ZalgoPromise} from "zalgo-promise";
 import {getScriptManager} from "../misc/getBackgroundPage";
 
-export function select (selector: string, scope: NodeSelector) {
+export const select = (selector: string, scope: NodeSelector) => {
 	const result = scope.querySelector(selector);
 	if (result === null) {
 		throw new Error("Element not found");
 	}
 	// require typed overloads to use
 	return <never> result;
-}
+};
 
+/* tslint:disable only-arrow-functions */
 export function selectAll
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: T, scope: NodeSelector):
@@ -24,7 +25,9 @@ export function selectAll (selector: string, scope: NodeSelector) {
 	const result = scope.querySelectorAll(selector);
 	return <NodeListOf<HTMLElement>> result;
 }
+/* tslint:enable only-arrow-functions */
 
+/* tslint:disable only-arrow-functions */
 export function createElement
 	<T extends keyof HTMLElementTagNameMap>
 	(tagName: T, properties: object | null, ...children: (string | Node)[]):
@@ -36,11 +39,12 @@ export function createElement (tagName: string, properties: object | null = null
 	if (children.length !== 0) element.append(...children);
 	return element;
 }
+/* tslint:enable only-arrow-functions */
 
 export {getScriptManager};
 
 export const documentLoaded = <T = void> (x?: T) =>
-	new ZalgoPromise<T>(function (resolve) {
+	new ZalgoPromise<T>((resolve) => {
 		if (document.readyState !== "loading") {
 			resolve(x);
 		} else {
@@ -58,7 +62,7 @@ type EventRaceList =
 	[EventTarget, string, string, string, string, string, string, string] |
 	[EventTarget, string, string, string, string, string, string, string, string];
 
-export function eventRace (...lists: EventRaceList[]) {
+export const eventRace = (...lists: EventRaceList[]) => {
 	return new ZalgoPromise<Event>((resolve) => {
 		const callback = (event: Event) => {
 			resolve(event);
@@ -74,4 +78,4 @@ export function eventRace (...lists: EventRaceList[]) {
 			}
 		}
 	});
-}
+};

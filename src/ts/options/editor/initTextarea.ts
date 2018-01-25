@@ -6,8 +6,10 @@ import {syntaxCheck} from "./syntaxCheck";
 select; // not unused
 
 namespace initTextarea {
+	/* tslint:disable only-arrow-functions */
 	declare function select (selector: "button[name=saveScript]", scope: Document): HTMLButtonElement;
-	export function initTextarea (textarea: HTMLTextAreaElement, section: SectionFormElement) {
+	/* tslint:enable only-arrow-functions */
+	export const initTextarea = (textarea: HTMLTextAreaElement, section: SectionFormElement) => {
 		textarea.addEventListener("keydown", (event) => {
 			if (event.key === "c" && event.altKey && !event.ctrlKey && SectionForm.getType(section) === "js") {
 				syntaxCheck(textarea.value, syntaxCheckOptions)
@@ -28,7 +30,7 @@ namespace initTextarea {
 				event.preventDefault();
 			}
 		});
-	}
+	};
 }
 
 const initTextareaExport = initTextarea.initTextarea;

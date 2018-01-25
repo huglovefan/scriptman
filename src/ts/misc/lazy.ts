@@ -1,4 +1,4 @@
-export function lazy <T extends any> (callback: () => T) {
+export const lazy = <T extends any> (callback: () => T) => {
 	let done = false;
 	let value: T;
 	return () => {
@@ -8,4 +8,4 @@ export function lazy <T extends any> (callback: () => T) {
 		}
 		return value;
 	};
-}
+};

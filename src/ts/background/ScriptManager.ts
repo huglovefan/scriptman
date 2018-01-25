@@ -23,11 +23,11 @@ namespace ScriptManager {
 		frames: {[tabId: number]: GAFRD[]},
 	};
 	
-	function isMetaKey (key: string) {
+	const isMetaKey = (key: string) => {
 		return /^__[^]*__$/.test(key);
-	}
+	};
 	
-	async function getSnapshot () {
+	const getSnapshot = async () => {
 		
 		const tabs: chrome.tabs.Tab[] = await browser.tabs.query({});
 		const framePromiseEntries = tabs.map((tab) =>
@@ -36,7 +36,7 @@ namespace ScriptManager {
 		const frames = await ZalgoPromise.hash<GAFRD[]>(framePromises);
 		
 		return {tabs, frames};
-	}
+	};
 	
 	const fixupAndApplyStorage = (storage: {[key: string]: any}, alwaysApply = false) => {
 		
@@ -83,7 +83,7 @@ namespace ScriptManager {
 	const connectors = new Map<AnySection, Connector>();
 	const loaded = new ZalgoPromise<undefined>();
 	
-	export async function init () {
+	export const init = async () => {
 		
 		if (loaded.resolved) {
 			return;
@@ -121,9 +121,9 @@ namespace ScriptManager {
 		browser.storage.onChanged.addListener(onStorageChanged);
 		
 		loaded.resolve(undefined);
-	}
+	};
 	
-	function onStorageChanged (changes: ScriptManager.StorageChanges, areaName: string) {
+	const onStorageChanged = (changes: ScriptManager.StorageChanges, areaName: string) => {
 		
 		if (areaName !== "local") {
 			return;
@@ -143,9 +143,9 @@ namespace ScriptManager {
 				add(key, newValue);
 			}
 		}
-	}
+	};
 	
-	function uninject (snapshot: PromiseLike<ScriptManager.SnapshotData>, section: AnySection) {
+	const uninject = (snapshot: PromiseLike<ScriptManager.SnapshotData>, section: AnySection) => {
 		snapshot.then((data) => {
 			for (const tab of data.tabs) {
 				for (const frame of data.frames[tab.id!]) {
@@ -153,9 +153,9 @@ namespace ScriptManager {
 				}
 			}
 		});
-	}
+	};
 	
-	function remove (id: string) {
+	const remove = (id: string) => {
 		
 		const script = scripts.get(id);
 		if (script === undefined) {
@@ -177,9 +177,9 @@ namespace ScriptManager {
 		}
 		
 		scripts.delete(id);
-	}
+	};
 	
-	function add (id: string, init: ScriptInit) {
+	const add = (id: string, init: ScriptInit) => {
 		
 		if (scripts.has(id)) {
 			remove(id);
@@ -210,7 +210,7 @@ namespace ScriptManager {
 		}
 		
 		scripts.set(id, script);
-	}
+	};
 	
 	// public api
 	

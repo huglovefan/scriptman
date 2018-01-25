@@ -4,9 +4,9 @@
 
 import {ReadonlyURL} from "./ReadonlyURL";
 
-export function hrefNoHash (url: ReadonlyURL) {
+export const hrefNoHash = (url: ReadonlyURL) => {
 	if (url.hash === "") {
 		return url.href;
 	}
 	return url.href.slice(0, -url.hash.length);
-}
+};

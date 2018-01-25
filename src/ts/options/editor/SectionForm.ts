@@ -12,6 +12,7 @@ export type SectionFormElement = HTMLFieldSetElement;
 
 export namespace SectionForm {
 	
+	/* tslint:disable only-arrow-functions */
 	declare function select (selector: "template#sectionTemplate", scope: Document): HTMLTemplateElement;
 	declare function select (selector: "select[name=sectionType]", scope: SectionFormElement): HTMLSelectElement;
 	declare function select (selector: "select[name=sectionRunAt]", scope: SectionFormElement): HTMLSelectElement;
@@ -26,26 +27,27 @@ export namespace SectionForm {
 	declare function select (selector: "button[name=addExclude]", scope: SectionFormElement): HTMLButtonElement;
 	declare function select (selector: "div[name=excludeArea]", scope: SectionFormElement): HTMLDivElement;
 	declare function select (selector: "summary.excludes", scope: SectionFormElement): HTMLElement;
+	/* tslint:enable only-arrow-functions */
 	
-	function clone () {
+	const clone = () => {
 		return <SectionFormElement>
 			(<DocumentFragment> select("template#sectionTemplate", document).content.cloneNode(true)).children[0];
-	}
+	};
 	
-	export function getType (section: SectionFormElement) {
+	export const getType = (section: SectionFormElement) => {
 		return select("select[name=sectionType]", section).value;
-	}
+	};
 	
-	function updateType (section: SectionFormElement) {
+	const updateType = (section: SectionFormElement) => {
 		const currtype = getType(section);
 		for (const element of selectAll("[data-section-type]", section)) {
 			element.hidden = (element.dataset.sectionType !== currtype);
 		}
-	}
+	};
 	
-	export function create (init?: AnySectionInit) {
+	export const create = (init?: AnySectionInit) => {
 		const section = clone();
-		select("select[name=sectionType]", section).addEventListener("change", function () {
+		select("select[name=sectionType]", section).addEventListener("change", () => {
 			updateType(section);
 			section.dispatchEvent(new CustomEvent("typechange"));
 		});
@@ -56,7 +58,7 @@ export namespace SectionForm {
 		select("button[name=addExclude]", section).addEventListener("click", () => {
 			addExclude(section);
 		});
-		select("button[name=removeSection]", section).addEventListener("click", function () {
+		select("button[name=removeSection]", section).addEventListener("click", () => {
 			section.remove();
 		});
 		if (init) {
@@ -66,9 +68,9 @@ export namespace SectionForm {
 			updateMatchCounts(section);
 		}
 		return section;
-	}
+	};
 	
-	export function getValue (section: SectionFormElement) {
+	export const getValue = (section: SectionFormElement) => {
 		const result: Partial<AnySectionInit> = {};
 		result.type = <AnySectionInit["type"]> select("select[name=sectionType]", section).value;
 		if (result.type === "js") {
@@ -86,9 +88,9 @@ export namespace SectionForm {
 				select("div[name=excludeArea]", section).children,
 				MatchForm.getValue);
 		return <AnySectionInit> result;
-	}
+	};
 	
-	export function setValue (section: SectionFormElement, init: AnySectionInit) {
+	export const setValue = (section: SectionFormElement, init: AnySectionInit) => {
 		select("select[name=sectionType]", section).value = init.type;
 		updateType(section);
 		if (init.type === "js") {
@@ -104,9 +106,9 @@ export namespace SectionForm {
 		select("div[name=excludeArea]", section)
 			.append(...init.excludes.map((i) => MatchForm.create(i)));
 		updateMatchCounts(section);
-	}
+	};
 	
-	export function addMatch (section: SectionFormElement, init?: AnyMatchInit, focus = true) {
+	export const addMatch = (section: SectionFormElement, init?: AnyMatchInit, focus = true) => {
 		let selectAll = false;
 		if (init === void 0 && editor!.from !== null) {
 			const frommatch: AnyMatchInit = {type: "domain", value: editor!.from!};
@@ -120,9 +122,9 @@ export namespace SectionForm {
 		select("div[name=matchArea]", section).appendChild(match);
 		if (focus || selectAll) MatchForm.focus(match, selectAll);
 		updateMatchCounts(section);
-	}
+	};
 	
-	function addExclude (section: SectionFormElement, init?: AnyMatchInit) {
+	const addExclude = (section: SectionFormElement, init?: AnyMatchInit) => {
 		let selectAll = false;
 		if (init === void 0 && editor!.from !== null) {
 			const frommatch: AnyMatchInit = {type: "domain", value: editor!.from!};
@@ -136,9 +138,9 @@ export namespace SectionForm {
 		select("div[name=excludeArea]", section).appendChild(match);
 		MatchForm.focus(match, selectAll);
 		updateMatchCounts(section);
-	}
+	};
 	
-	function hasMatchOrExclude (section: SectionFormElement, search: AnyMatchInit) {
+	const hasMatchOrExclude = (section: SectionFormElement, search: AnyMatchInit) => {
 		const elements = [
 			...select("div[name=matchArea]", section).children,
 			...select("div[name=excludeArea]", section).children,
@@ -148,16 +150,16 @@ export namespace SectionForm {
 			return match.type === search.type &&
 				match.value.trim().toLowerCase() === search.value;
 		});
-	}
+	};
 	
-	export function updateMatchCounts (section: SectionFormElement) {
+	export const updateMatchCounts = (section: SectionFormElement) => {
 		select("summary.matches", section).dataset.count =
 			String(selectAll("[name=matchArea] > .match", section).length);
 		select("summary.excludes", section).dataset.count =
 			String(selectAll("[name=excludeArea] > .match", section).length);
-	}
+	};
 	
-	export async function checkSyntax (section: SectionFormElement) {
+	export const checkSyntax = async (section: SectionFormElement) => {
 		const type = getType(section);
 		if (type === "js") {
 			const textarea = select("textarea[name=sectionBody]", section);
@@ -171,9 +173,9 @@ export namespace SectionForm {
 				console.error(error);
 			}
 		}
-	}
+	};
 	
-	export function showSyntaxError (section: SectionFormElement, message: string, position?: number) {
+	export const showSyntaxError = (section: SectionFormElement, message: string, position?: number) => {
 		
 		const textarea = select("textarea[name=sectionBody]", section);
 		
@@ -191,9 +193,9 @@ export namespace SectionForm {
 		).then(() => {
 			textarea.setCustomValidity("");
 		});
-	}
+	};
 	
-	export function showSyntaxOk (section: SectionFormElement) {
+	export const showSyntaxOk = (section: SectionFormElement) => {
 		
 		const textarea = select("textarea[name=sectionBody]", section);
 		
@@ -205,5 +207,5 @@ export namespace SectionForm {
 		).then(() => {
 			textarea.style.outline = "";
 		});
-	}
+	};
 }

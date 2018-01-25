@@ -39,15 +39,15 @@ export abstract class Connector {
 }
 
 // todo: maybe this should be on Section? with a staticOnly flag?
-function commonStartupInject (section: AnySection, data: ScriptManager.SnapshotData) {
+const commonStartupInject = (section: AnySection, data: ScriptManager.SnapshotData) => {
 	for (const tab of data.tabs) {
 		for (const frame of data.frames[tab.id!]) {
 			section.injectIfMatches(URLCache.get(tab.url!), tab.id!, frame.frameId);
 		}
 	}
-}
+};
 
-function testFrameBehavior (frameBehavior: Section.FrameBehavior, frameId: number) {
+const testFrameBehavior = (frameBehavior: Section.FrameBehavior, frameId: number) => {
 	if (frameBehavior === "allFrames") {
 		return true;
 	}
@@ -58,7 +58,7 @@ function testFrameBehavior (frameBehavior: Section.FrameBehavior, frameId: numbe
 		return frameId !== FRAME_ID_TOP;
 	}
 	throw new Error(`Bad frameBehavior value ${frameBehavior}`);
-}
+};
 
 /**
  * combines multiple connectors into one

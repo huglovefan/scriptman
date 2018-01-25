@@ -7,7 +7,7 @@ export interface SyntaxCheckWindow extends Window {
 
 {
 
-function linenoColno2Index (s: string, lineno: number, colno: number) {
+const linenoColno2Index = (s: string, lineno: number, colno: number) => {
 	const lineLengths: number[] = [];
 	s.replace(/([^\n\r\u2028\u2029]*)(\n|\r\n?|\u2028|\u2029)|([^\n\r\u2028\u2029]+)$/g,
 		((_$0: string, line?: string, end?: string, lastline?: string) => {
@@ -23,7 +23,7 @@ function linenoColno2Index (s: string, lineno: number, colno: number) {
 		result += lineLengths[i];
 	}
 	return result;
-}
+};
 
 const tokens = {
 	whitespace: /\s+/y,
@@ -32,7 +32,7 @@ const tokens = {
 	semicolons: /;+/y,
 	stringLiteral: /(['"])((?:\\[^]|(?!\1).)*?)\1/y,
 };
-function isStrictSource (source: string) {
+const isStrictSource = (source: string) => {
 	for (let i = 0; i < source.length; /**/) {
 		const oldIndex = i;
 		for (const [type, pattern] of Object.entries(tokens)) {
@@ -56,10 +56,10 @@ function isStrictSource (source: string) {
 		}
 	}
 	return false;
-}
+};
 
 let offsets: {lineno: number, colno: number} | undefined;
-function getOffsets () {
+const getOffsets = () => {
 	if (offsets !== undefined) {
 		return ZalgoPromise.resolve(offsets);
 	}
@@ -73,10 +73,13 @@ function getOffsets () {
 		}
 		return offsets!;
 	});
-}
+};
 
-(<SyntaxCheckWindow> window).syntaxCheck = syntaxCheck;
-function syntaxCheck (originalCode: string, options: SyntaxCheckOptions = {}): ZalgoPromise<SyntaxCheckResult | null> {
+const syntaxCheck = (
+	originalCode: string,
+	options: SyntaxCheckOptions = {}
+): ZalgoPromise<SyntaxCheckResult | null> => {
+	
 	return getOffsets().then<SyntaxCheckResult | null>((offsets) => {
 		
 		let code = originalCode;
@@ -155,6 +158,7 @@ function syntaxCheck (originalCode: string, options: SyntaxCheckOptions = {}): Z
 			document.documentElement.append(script);
 		});
 	});
-}
+};
+(<SyntaxCheckWindow> window).syntaxCheck = syntaxCheck;
 
 }

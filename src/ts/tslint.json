@@ -9,6 +9,7 @@
 		"no-magic-numbers": true,
 		"no-parameter-reassignment": true,
 		"no-unnecessary-type-assertion": true,
+		"only-arrow-functions": true,
 		"prefer-for-of": true,
 		"promise-function-async": true,
 		"typedef-whitespace": [true, {

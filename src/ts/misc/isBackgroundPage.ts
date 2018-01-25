@@ -10,8 +10,8 @@ type AnyWindow = Window | BackgroundPageWindow;
 //       - need to move the background page to a proper html page
 //       - name it something that can be checked for here
 
-export function isBackgroundPage (w: AnyWindow = window): w is BackgroundPageWindow {
+export const isBackgroundPage = (w: AnyWindow = window): w is BackgroundPageWindow => {
 	return (
 		w.location.pathname === "/_generated_background_page.html"
 	);
-}
+};
