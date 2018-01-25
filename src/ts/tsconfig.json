@@ -15,6 +15,17 @@
 			"es2017",
 			"es2017.object",
 			"es2017.sharedmemory"
+		],
+		"plugins": [
+			{
+				"name": "tslint-language-service",
+				"alwaysShowRuleFailuresAsWarnings": false,
+				"ignoreDefinitionFiles": false,
+				"configFile": "./tslint.json",
+				"disableNoUnusedVariableRule": true,
+				"supressWhileTypeErrorsPresent": false,
+				"mockTypeScriptVersion": true
+			}
 		]
 	}
 }

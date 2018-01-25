@@ -5,7 +5,6 @@ import {CssInjection, Injection, JsInjection} from "./Injection";
 import {AnyMatchInit, Match} from "./Match";
 import {MatchList} from "./MatchList";
 import {Script} from "./Script";
-import {snapshot} from "./snapshot";
 
 export namespace Section {
 	export type FrameBehavior = "allFrames" | "topFrameOnly" | "subFramesOnly";

@@ -10,7 +10,8 @@ const uglify = require("gulp-uglify-es").default;
 const cleanCSS = require("gulp-clean-css");
 const exports2json = require("gulp-exports2json");
 const zip = require("gulp-zip");
-const tslint = require("gulp-tslint");
+const gulpTslint = require("gulp-tslint");
+const tslint = require("tslint");
 const sequence = require("gulp-sequence");
 
 const fs = require("fs");
@@ -22,8 +23,15 @@ const {dev, prod} = require("./env");
 
 gulp.task("tslint", () => {
 	return gulp.src("../src/ts/**/*.ts")
-		.pipe(tslint(requireUncached("../src/ts/tslint.json")))
-		.pipe(tslint.report());
+		.pipe(gulpTslint({
+			configuration: "../src/ts/tslint.json",
+			formatter: "stylish",
+			program: tslint.Linter.createProgram("../src/ts/tsconfig.json"),
+		}))
+		.pipe(gulpTslint.report({
+			allowWarnings: false,
+			summarizeFailureOutput: true,
+		}));
 });
 
 gulp.task("webpack", (callback) => {

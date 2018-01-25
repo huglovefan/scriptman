@@ -30,6 +30,7 @@
     "require-uncached": "^1.0.3",
     "ts-loader": "^3.3.1",
     "tslint": "^5.9.1",
+    "tslint-language-service": "^0.9.8",
     "typescript": "^2.7.0-rc",
     "uglifyjs-webpack-plugin": "^1.1.6",
     "vue": "^2.5.13",

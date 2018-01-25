@@ -49,7 +49,7 @@ export namespace SectionForm {
 		const section = clone();
 		select("select[name=sectionType]", section).addEventListener("change", () => {
 			updateType(section);
-			section.dispatchEvent(new CustomEvent("typechange"));
+			section.dispatchEvent(new CustomEvent<null>("typechange"));
 		});
 		initTextarea(select("textarea[name=sectionBody]", section), section);
 		select("button[name=addMatch]", section).addEventListener("click", () => {

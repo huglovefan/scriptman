@@ -111,7 +111,7 @@ namespace Editor {
 				[this.id]: script
 			});
 			this.lastSavedValue = script;
-			window.dispatchEvent(new CustomEvent("editorsave"));
+			window.dispatchEvent(new CustomEvent<null>("editorsave"));
 			return script;
 		}
 		
