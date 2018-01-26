@@ -4,7 +4,6 @@ import {isBackgroundPage} from "../misc/isBackgroundPage";
 import {BadgeManager} from "./BadgeManager";
 import {fixupAndApplyStorage} from "./fixupAndApplyStorage";
 import {dispatchOldNavigations} from "./onNavigated";
-import {ScriptInit} from "./Script";
 import {ScriptManager} from "./ScriptManager";
 import {ScriptStore} from "./ScriptStore";
 
@@ -27,13 +26,15 @@ type Storage = {[key: string]: any};
 	})
 	.then((scriptStore) => {
 		(<BackgroundPageWindow> window).ScriptManager = {
-			get: (id: string) => ZalgoPromise.resolve(scriptStore.getScript(id) || undefined),
-			getAll: () => ZalgoPromise.resolve(scriptStore.getAllScripts()),
-			getRaw: async (id: string) => {
-				const storage = <any> await browser.storage.local.get(id);
-				return <ScriptInit | undefined> storage[id];
+			get: (id: string) => {
+				return ZalgoPromise.resolve(scriptStore.getScript(id));
 			},
-			importStorage: (storage: Storage) => fixupAndApplyStorage(storage, true),
+			getAll: () => {
+				return ZalgoPromise.resolve(scriptStore.getAllScripts());
+			},
+			importStorage: (storage: Storage) => {
+				return fixupAndApplyStorage(storage, true);
+			},
 		};
 		dispatchOldNavigations();
 	});

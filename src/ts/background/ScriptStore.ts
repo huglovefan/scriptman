@@ -46,8 +46,7 @@ export class ScriptStore {
 		return this;
 	}
 	public getScript (id: string) {
-		const script = this.scripts.get(id);
-		return (script !== undefined) ? script : null;
+		return this.scripts.get(id);
 	}
 	public getAllScripts () {
 		return [...this.scripts.entries()];

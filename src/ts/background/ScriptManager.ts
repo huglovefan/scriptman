@@ -5,13 +5,12 @@
 //
 
 import {isBackgroundPage} from "../misc/isBackgroundPage";
-import {Script, ScriptInit} from "./Script";
+import {Script} from "./Script";
 
 console.assert(isBackgroundPage());
 
 export interface ScriptManager {
 	getAll (): PromiseLike<[string, Script][]>;
 	get (id: string): PromiseLike<Script | undefined>;
-	getRaw (id: string): PromiseLike<ScriptInit | undefined>;
 	importStorage (storage: {[key: string]: any;}): PromiseLike<{[key: string]: any;}>;
 }
