@@ -43,7 +43,7 @@
 		"no-implicit-dependencies": true,
 		"no-inferred-empty-object-type": true,
 		"no-invalid-template-strings": true,
-		"no-invalid-this": true,
+		"no-invalid-this": false,
 		"no-misused-new": true,
 		"no-sparse-arrays": true,
 		"no-string-literal": true,
