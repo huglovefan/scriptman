@@ -6,19 +6,16 @@ type GAFRD = chrome.webNavigation.GetAllFrameResultDetails;
 
 export type snapshot = {
 	tabs: chrome.tabs.Tab[],
-	frames: {[frameId: number]: GAFRD[]},
+	frames: {[tabId: number]: GAFRD[]},
 };
 
-export const snapshot = (): PromiseLike<snapshot> => {
-	return (<Promise<chrome.tabs.Tab[]>> browser.tabs.query({}))
-		.then((tabs) => {
-			const framePromiseEntries = tabs.map((tab) => {
-				const tabId = tab.id!;
-				const framesPromise =
-					<Promise<GAFRD[]>> browser.webNavigation.getAllFrames({tabId});
-				return <[number, Promise<GAFRD[]>]> [tabId, framesPromise];
-			});
-			const framePromises = entriesToObject(framePromiseEntries);
-			return <snapshot> <any> ZalgoPromise.hash({tabs, framePromises});
-		});
+export const snapshot = async (): Promise<snapshot> => {
+	const tabs = <chrome.tabs.Tab[]> await browser.tabs.query({});
+	const frameEntries = await ZalgoPromise.map(tabs, async (tab) => {
+		const tabId = tab.id!;
+		const framesPromise = <GAFRD[]> await browser.webNavigation.getAllFrames({tabId});
+		return <[number, GAFRD[]]> [tabId, framesPromise];
+	});
+	const frames = entriesToObject(frameEntries);
+	return {tabs, frames};
 };

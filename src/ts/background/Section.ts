@@ -1,4 +1,3 @@
-import {CHROME, FIREFOX} from "../browser/browser";
 import {ReadonlyURL} from "../misc/ReadonlyURL";
 import {Connector} from "./Connector";
 import {CssInjection, Injection, JsInjection} from "./Injection";
@@ -59,6 +58,8 @@ export abstract class Section {
 			return;
 		}
 		this.connector.disconnect();
+		this.injection.removeAll();
+		(<any> this).connector = null;
 	}
 }
 
@@ -70,18 +71,11 @@ interface CssSectionInit extends SectionInit<"css"> {
 	cssOrigin: CssSection.CssOrigin;
 }
 
-// tslint:disable:no-magic-numbers
-const supportsCssOrigin =
-	FIREFOX ? FIREFOX.equalOrNewer([53]) :
-	CHROME ? CHROME.equalOrNewer([66, 0, 3326, 0]) :
-	false;
-// tslint:enable:no-magic-numbers
-
 export class CssSection extends Section {
 	public constructor (init: CssSectionInit, script: Script) {
 		super(init, script, new CssInjection({
 			code: init.body,
-			...((supportsCssOrigin) ? {cssOrigin: init.cssOrigin} : {}),
+			cssOrigin: init.cssOrigin,
 			matchAboutBlank: true,
 			runAt: "document_start",
 		}));

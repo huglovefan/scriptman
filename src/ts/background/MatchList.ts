@@ -21,6 +21,8 @@ export class MatchList {
 		if (this.matches.length === 0) {
 			return returnTrue;
 		}
-		return ({url}: NavigationDetails) => this.test(url);
+		return ({url}: NavigationDetails) => {
+			return this.test(url) === this.defaultValue;
+		};
 	}
 }

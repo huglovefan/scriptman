@@ -12,6 +12,7 @@ console.assert(isBackgroundPage());
 export interface BackgroundPageWindow extends Window {
 	BadgeManager?: BadgeManager;
 	ScriptManager?: ScriptManager;
+	ScriptStore?: ScriptStore;
 }
 
 type Storage = {[key: string]: any};
@@ -20,6 +21,7 @@ type Storage = {[key: string]: any};
 	.then(fixupAndApplyStorage)
 	.then(() => {
 		const scriptStore = new ScriptStore();
+		(<BackgroundPageWindow> window).ScriptStore = scriptStore;
 		const badgeManager = new BadgeManager(scriptStore);
 		(<BackgroundPageWindow> window).BadgeManager = badgeManager;
 		return scriptStore.init();

@@ -1,5 +1,5 @@
 //
-// checks if scripts can be ran in or injected into a specific tab or frame
+// checks if we can run scripts in a specific tab/frame
 //
 
 import browser from "webextension-polyfill";
