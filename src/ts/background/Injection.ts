@@ -73,12 +73,12 @@ export class CssInjection extends Injection {
 	public static readonly isStatic = true;
 	public static readonly canRemove = supportsRemoveCSS;
 	public inject (tabId: number, frameId: number) {
-		if (!supportsRemoveCSS) {
-			return ZalgoPromise.resolve(false);
-		}
 		return super.callTabsAPI("insertCSS", tabId, frameId, true);
 	}
 	public remove (tabId: number, frameId: number) {
+		if (!supportsRemoveCSS) {
+			return ZalgoPromise.resolve(false);
+		}
 		return super.callTabsAPI("removeCSS", tabId, frameId, false);
 	}
 }
