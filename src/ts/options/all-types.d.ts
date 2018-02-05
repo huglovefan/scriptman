@@ -17,3 +17,13 @@ interface HTMLTextAreaElement {
 interface HTMLIFrameElement {
 	srcdoc: string;
 }
+
+interface HTMLElementTagNameMap {
+	"*": HTMLElement;
+	details: HTMLDetailsElement;
+	summary: HTMLSummaryElement;
+}
+
+interface DocumentFragment {
+	cloneNode (recursive?: boolean): DocumentFragment;
+}

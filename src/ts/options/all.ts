@@ -6,18 +6,24 @@ export const sel = <
 	return select<TTagName>(tagName + selector, scope);
 };
 
+export const selAll = <
+	TTagName extends keyof HTMLElementTagNameMap
+> (tagName: TTagName, selector: string, scope: NodeSelector) => {
+	return selectAll<TTagName>(tagName + selector, scope);
+};
+
 // tslint:disable only-arrow-functions
-export function select
+function select
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: T, scope: NodeSelector):
 	HTMLElementTagNameMap[T];
 
-export function select
+function select
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: string, scope: NodeSelector):
 	HTMLElementTagNameMap[T];
 
-export function select (selector: string, scope: NodeSelector) {
+function select (selector: string, scope: NodeSelector) {
 	const result = scope.querySelector(selector);
 	if (result === null) {
 		throw new Error("Element not found");
@@ -26,17 +32,17 @@ export function select (selector: string, scope: NodeSelector) {
 	return <never> result;
 }
 
-export function selectAll
+function selectAll
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: T, scope: NodeSelector):
 	NodeListOf<HTMLElementTagNameMap[T]>;
 
-export function selectAll
+function selectAll
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: string, scope: NodeSelector):
 	NodeListOf<HTMLElementTagNameMap[T]>;
 
-export function selectAll (selector: string, scope: NodeSelector) {
+function selectAll (selector: string, scope: NodeSelector) {
 	const result = scope.querySelectorAll(selector);
 	return <NodeListOf<HTMLElement>> result;
 }
