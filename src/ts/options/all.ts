@@ -1,15 +1,31 @@
 import {getScriptManager} from "../misc/getBackgroundPage";
 
-export const select = (selector: string, scope: NodeSelector) => {
+export const sel = <
+	TTagName extends keyof HTMLElementTagNameMap
+> (tagName: TTagName, selector: string, scope: NodeSelector) => {
+	return select<TTagName>(tagName + selector, scope);
+};
+
+// tslint:disable only-arrow-functions
+export function select
+	<T extends keyof HTMLElementTagNameMap>
+	(selector: T, scope: NodeSelector):
+	HTMLElementTagNameMap[T];
+
+export function select
+	<T extends keyof HTMLElementTagNameMap>
+	(selector: string, scope: NodeSelector):
+	HTMLElementTagNameMap[T];
+
+export function select (selector: string, scope: NodeSelector) {
 	const result = scope.querySelector(selector);
 	if (result === null) {
 		throw new Error("Element not found");
 	}
 	// require typed overloads to use
 	return <never> result;
-};
+}
 
-// tslint:disable only-arrow-functions
 export function selectAll
 	<T extends keyof HTMLElementTagNameMap>
 	(selector: T, scope: NodeSelector):
