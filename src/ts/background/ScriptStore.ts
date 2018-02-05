@@ -26,13 +26,14 @@ export class ScriptStore {
 			console.warn("ScriptStore.init called twice");
 			return this;
 		}
-		loadScripts: {
+		// https://github.com/Microsoft/TypeScript/issues/21626
+		await (async () => {
 			let storage;
 			try {
 				storage = await browser.storage.local.get();
 			} catch (error) {
 				console.error(error);
-				break loadScripts;
+				return;
 			}
 			for (const [key, string] of Object.entries(storage)) {
 				if (isMetaKey(key)) {
@@ -40,7 +41,7 @@ export class ScriptStore {
 				}
 				this.addScript(key, <ScriptInit> string);
 			}
-		}
+		})();
 		chrome.storage.onChanged.addListener(this.onStorageChanged);
 		(<any> this).ready = true;
 		return this;

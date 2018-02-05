@@ -31,7 +31,7 @@
     "ts-loader": "^3.4.0",
     "tslint": "^5.9.1",
     "tslint-language-service": "^0.9.8",
-    "typescript": "^2.7.0-dev.20180124",
+    "typescript": "^2.8.0-dev.20180204",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "vue": "^2.5.13",
     "vue-loader": "^14.1.1",
