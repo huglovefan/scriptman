@@ -3,10 +3,10 @@
 //
 
 // tslint:disable:only-arrow-functions
-export function entriesToObject <K extends string, V> (entries: [K, V][]): {[key in K]: V};
-export function entriesToObject <K extends number, V> (entries: [K, V][]): {[key: number]: V};
+export function entriesToObject <K extends string, V> (entries: ReadonlyArray<[K, V]>): {[key in K]: V};
+export function entriesToObject <K extends number, V> (entries: ReadonlyArray<[K, V]>): {[key: number]: V};
 
-export function entriesToObject (entries: [PropertyKey, any][]) {
+export function entriesToObject (entries: ReadonlyArray<[PropertyKey, any]>) {
 	const result: any = {};
 	for (const [k, v] of entries) {
 		result[k] = v;

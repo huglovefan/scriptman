@@ -1,5 +1,5 @@
 import {ScriptManager} from "../background/ScriptManager";
-import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {isBackgroundPage} from "../misc/isBackgroundPageWindow";
 import {getScriptManager} from "./all";
 
 console.assert(!isBackgroundPage());

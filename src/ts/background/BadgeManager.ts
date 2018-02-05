@@ -39,7 +39,7 @@ export class BadgeManager {
 	public tabHasScripts (tabId: number) {
 		return (
 			this.tabScripts.has(tabId) &&
-			this.tabScripts.get(tabId)!.size !== 0
+			this.tabScripts.get(tabId).size !== 0
 		);
 	}
 	private registerScript ({script}: ScriptStoreEventDetail) {
@@ -76,10 +76,8 @@ export class BadgeManager {
 		}
 	}
 	private updateBadgeForTab (tabId: number) {
-		chrome.browserAction.setBadgeText({
-			tabId,
-			text: String(this.tabScripts.get(tabId).size),
-		});
+		const text = String(this.tabScripts.get(tabId).size);
+		chrome.browserAction.setBadgeText({tabId, text});
 		this.deleteSetIfEmpty(tabId);
 	}
 	private onNavigated (details: NavigationDetails) {

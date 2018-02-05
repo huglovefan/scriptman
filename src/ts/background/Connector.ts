@@ -1,5 +1,5 @@
 import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
-import {returnTrue} from "../misc/returnConstants";
+import {returnTrue} from "../misc/functionConstants";
 import {Injection} from "./Injection";
 import {MatchList} from "./MatchList";
 import {NavigationDetails, onNavigated} from "./onNavigated";
@@ -24,10 +24,11 @@ export class Connector {
 	private readonly event: typeof onNavigated;
 	private readonly injection: Injection;
 	public constructor (init: ConnectorInit) {
-		this.event = onNavigated
-			.filter(frameBehaviorTests[init.frameBehavior] || returnTrue)
-			.filter(init.matches.getNavigationFilter())
-			.filter(init.excludes.getNavigationFilter());
+		this.event = onNavigated.filter([
+			frameBehaviorTests[init.frameBehavior] || returnTrue,
+			init.matches.getNavigationFilter(),
+			init.excludes.getNavigationFilter(),
+		]);
 		this.injection = init.injection;
 		this.navigationCallback = this.navigationCallback.bind(this);
 		this.event.addListener(this.navigationCallback);

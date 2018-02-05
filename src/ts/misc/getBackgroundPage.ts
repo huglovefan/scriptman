@@ -7,23 +7,33 @@ import {ZalgoPromise} from "zalgo-promise";
 import {BackgroundPageWindow} from "../background/background";
 import {BadgeManager} from "../background/BadgeManager";
 import {ScriptManager} from "../background/ScriptManager";
-import {isBackgroundPage} from "./isBackgroundPage";
+import {isBackgroundPage} from "./isBackgroundPageWindow";
+
+let backgroundPagePromise: PromiseLike<BackgroundPageWindow> | null = null;
 
 export const getBackgroundPage = () => {
-	const win = window;
-	if (isBackgroundPage(win)) {
-		console.log("[getBackgroundPage] we're the background page");
-		return ZalgoPromise.resolve(win);
+	if (backgroundPagePromise === null) {
+		const win = window;
+		if (isBackgroundPage(win)) {
+			console.log("[getBackgroundPage] we're the background page");
+			backgroundPagePromise = ZalgoPromise.resolve(win);
+		} else {
+			backgroundPagePromise = new ZalgoPromise<BackgroundPageWindow>((resolve, reject) => {
+				browser.runtime.getBackgroundPage()
+					.then((backgroundPage: BackgroundPageWindow) => {
+						if (!isBackgroundPage(backgroundPage)) {
+							reject(new Error("Couldn't get background page"));
+							return;
+						}
+						console.log("[getBackgroundPage] got it from browser.runtime");
+						resolve(backgroundPage);
+					}, reject);
+			});
+		}
+	} else {
+		console.log("[getBackgroundPage] used cached promise");
 	}
-	return new ZalgoPromise<BackgroundPageWindow>((resolve, reject) => {
-		browser.runtime.getBackgroundPage().then((backgroundPage: BackgroundPageWindow) => {
-			if (!backgroundPage || !backgroundPage.ScriptManager) {
-				return reject(new Error("Couldn't get background page"));
-			}
-			console.log("[getBackgroundPage] got it from browser.runtime");
-			resolve(backgroundPage);
-		}, reject);
-	});
+	return backgroundPagePromise;
 };
 
 // just have them here as non-optional to fix the return type of getThing
@@ -33,13 +43,14 @@ interface ThingsToGet extends BackgroundPageWindow {
 }
 
 const getThing = <K extends keyof ThingsToGet> (key: K, friendlyName: string = key) => {
-	return getBackgroundPage().then((backgroundPage) => {
-		const result = (<ThingsToGet> backgroundPage)[key];
-		if (result === undefined) {
-			throw new Error(`Couldn't get ${friendlyName}`);
-		}
-		return result;
-	});
+	return getBackgroundPage()
+		.then((backgroundPage) => {
+			const result = (<ThingsToGet> backgroundPage)[key];
+			if (result === undefined) {
+				throw new Error(`Couldn't get ${friendlyName}`);
+			}
+			return result;
+		});
 };
 
 export const getBadgeManager = () => getThing("BadgeManager", "badge manager");

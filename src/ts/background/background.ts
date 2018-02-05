@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 import {ZalgoPromise} from "zalgo-promise";
-import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {isBackgroundPage} from "../misc/isBackgroundPageWindow";
 import {BadgeManager} from "./BadgeManager";
 import {fixupAndApplyStorage} from "./fixupAndApplyStorage";
 import {dispatchOldNavigations} from "./onNavigated";

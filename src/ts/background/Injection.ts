@@ -2,7 +2,7 @@ import browser from "webextension-polyfill";
 import {ZalgoPromise} from "zalgo-promise";
 import {CHROME, FIREFOX} from "../browser/browser";
 import {Event} from "../misc/Event";
-import {returnFalse} from "../misc/returnConstants";
+import {returnFalse} from "../misc/functionConstants";
 import {CssSection, JsSection} from "./Section";
 import {snapshot} from "./snapshot";
 
@@ -24,19 +24,23 @@ console.log("supportsCssOrigin: %o", supportsCssOrigin);
 const supportsRemoveCSS = typeof browser.tabs.removeCSS === "function";
 console.log("supportsRemoveCSS: %o", supportsRemoveCSS);
 
+const fixInjectDetails = ({cssOrigin, ...injectDetails}: InjectDetails) => {
+	if (supportsCssOrigin) {
+		(<InjectDetails> injectDetails).cssOrigin = cssOrigin;
+	}
+	return <InjectDetails> injectDetails;
+};
+
 export abstract class Injection {
 	public static readonly isStatic: boolean | null = null;
 	public static readonly canRemove: boolean | null = null;
 	private readonly injectDetails: InjectDetails;
 	public readonly onInjected: Event<{tabId: number, frameId: number}>;
 	public readonly onRemoved: Event<{tabId: number, frameId: number}>;
-	public constructor ({cssOrigin, ...injectDetails}: Readonly<InjectDetails>) {
-		this.injectDetails = injectDetails;
+	public constructor (injectDetails: Readonly<InjectDetails>) {
+		this.injectDetails = fixInjectDetails(injectDetails);
 		this.onInjected = new Event();
 		this.onRemoved = new Event();
-		if (supportsCssOrigin && cssOrigin !== undefined) {
-			this.injectDetails.cssOrigin = cssOrigin;
-		}
 	}
 	protected callTabsAPI (methodName: TabsMethodName, tabId: number, frameId: number, isInjection: boolean) {
 		const method: TabsMethod | undefined = browser.tabs[methodName];

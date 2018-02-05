@@ -17,13 +17,13 @@ export class VersionNumber {
 		return new VersionNumber(s.split(".").map(Number));
 	}
 	
-	private readonly numbers: number[];
+	private readonly numbers: ReadonlyArray<number>;
 	
-	public constructor (numbers: number[]) {
+	public constructor (numbers: ReadonlyArray<number>) {
 		this.numbers = numbers;
 	}
 	
-	private compare (numbers: number[]) {
+	private compare (numbers: ReadonlyArray<number>) {
 		const length = Math.max(this.numbers.length, numbers.length);
 		for (let i = 0; i < length; i++) {
 			if (this.numbers[i] > numbers[i]) return 1;
@@ -32,7 +32,7 @@ export class VersionNumber {
 		return 0;
 	}
 	
-	public equalOrNewer (numbers: number[]) {
+	public equalOrNewer (numbers: ReadonlyArray<number>) {
 		return this.compare(numbers) !== -1;
 	}
 }

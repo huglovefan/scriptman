@@ -1,4 +1,4 @@
-import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {isBackgroundPage} from "../misc/isBackgroundPageWindow";
 import {ReadonlyURL} from "../misc/ReadonlyURL";
 import {AnySection, AnySectionInit, Section} from "./Section";
 

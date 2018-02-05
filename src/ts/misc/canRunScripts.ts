@@ -13,13 +13,14 @@ const checkWithBadgeManager = (tabId: number, frameId = FRAME_ID_TOP) => {
 	if (frameId !== FRAME_ID_TOP) {
 		return ZalgoPromise.resolve(null);
 	}
-	return getBadgeManager().then((badgeManager) => {
-		if (badgeManager.tabHasScripts(tabId)) {
-			console.log("[canRunScripts] scripts have been ran in the tab");
-			return true;
-		}
-		return null;
-	});
+	return getBadgeManager()
+		.then((badgeManager) => {
+			if (badgeManager.tabHasScripts(tabId)) {
+				console.log("[canRunScripts] scripts have been ran in the tab");
+				return true;
+			}
+			return null;
+		});
 };
 
 const checkWithExecuteScript = (tabId: number, frameId = FRAME_ID_TOP) => {
@@ -32,7 +33,8 @@ const checkWithExecuteScript = (tabId: number, frameId = FRAME_ID_TOP) => {
 			runAt: "document_start",
 		}).then((results: any[]) => {
 			resolve(Array.isArray(results) && results.some(Boolean));
-		}).catch(() => {
+		}).catch((error) => {
+			console.error(error);
 			resolve(false);
 		});
 	});

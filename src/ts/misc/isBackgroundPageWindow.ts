@@ -12,6 +12,7 @@ type AnyWindow = Window | BackgroundPageWindow;
 
 export const isBackgroundPage = (w: AnyWindow = window): w is BackgroundPageWindow => {
 	return (
+		w != null &&
 		w.location.pathname === "/_generated_background_page.html"
 	);
 };

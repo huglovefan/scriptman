@@ -5,9 +5,9 @@ import {canRunScripts} from "../misc/canRunScripts";
 import {entriesToObject} from "../misc/entriesToObject";
 import {escapeRegExp} from "../misc/escapeRegExp";
 import {FRAME_ID_TOP} from "../misc/FRAME_ID_TOP";
+import {returnTrue} from "../misc/functionConstants";
 import {hrefNoHash} from "../misc/hrefNoHash";
 import {ReadonlyURL} from "../misc/ReadonlyURL";
-import {returnTrue} from "../misc/returnConstants";
 import {createElement} from "./all";
 import {ScriptManager} from "./scriptManagerRemote";
 
@@ -111,6 +111,7 @@ export default {
 			try {
 				this.searchPredicate = getSearchPredicate(this.searchType, this.search);
 			} catch (error) {
+				console.error(error);
 				this.searchPredicate = returnTrue;
 				// todo: show an error message
 			}

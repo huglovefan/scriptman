@@ -29,6 +29,7 @@ export const syntaxCheck = (code: string, options?: SyntaxCheckOptions) => {
 				try {
 					resolve(await syntaxCheckFunction(code, options));
 				} catch (error) {
+					console.error(error);
 					reject(error);
 				}
 			} else {

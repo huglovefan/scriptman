@@ -1,5 +1,5 @@
+import {returnTrue} from "../misc/functionConstants";
 import {ReadonlyURL} from "../misc/ReadonlyURL";
-import {returnTrue} from "../misc/returnConstants";
 import {AnyMatch} from "./Match";
 import {NavigationDetails} from "./onNavigated";
 

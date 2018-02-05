@@ -4,7 +4,7 @@
 // todo: remove
 //
 
-import {isBackgroundPage} from "../misc/isBackgroundPage";
+import {isBackgroundPage} from "../misc/isBackgroundPageWindow";
 import {Script} from "./Script";
 
 console.assert(isBackgroundPage());
