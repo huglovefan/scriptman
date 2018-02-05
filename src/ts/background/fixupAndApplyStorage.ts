@@ -1,8 +1,7 @@
 import browser from "webextension-polyfill";
-import {ZalgoPromise} from "zalgo-promise";
 import {isMetaKey} from "./misc/isMetaKey";
 
-export const fixupAndApplyStorage = (storage: {[key: string]: any}, alwaysApply = false) => {
+export const fixupAndApplyStorage = async (storage: {[key: string]: any}, alwaysApply = false) => {
 	
 	const extensionVersion = chrome.runtime.getManifest().version;
 	const newVersion = (storage.__version__ !== extensionVersion);
@@ -37,8 +36,8 @@ export const fixupAndApplyStorage = (storage: {[key: string]: any}, alwaysApply 
 	}
 	
 	if (newVersion || alwaysApply) {
-		return (<Promise<any>> browser.storage.local.set(storage)).then(() => storage);
+		await browser.storage.local.set(storage);
 	}
 	
-	return ZalgoPromise.resolve(storage);
+	return storage;
 };

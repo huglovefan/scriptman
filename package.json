@@ -37,7 +37,6 @@
     "vue-loader": "^14.1.1",
     "vue-template-compiler": "^2.5.13",
     "webextension-polyfill": "^0.2.1",
-    "webpack": "^3.10.0",
-    "zalgo-promise": "^1.0.22"
+    "webpack": "^3.10.0"
   }
 }

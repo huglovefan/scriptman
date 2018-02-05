@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import {ZalgoPromise} from "zalgo-promise";
 import {Script} from "../background/Script";
 import {canRunScripts} from "../misc/canRunScripts";
 import {entriesToObject} from "../misc/entriesToObject";
@@ -23,14 +22,11 @@ if (isPopup) {
 
 const activeTabPromise =
 	isPopup &&
-	new ZalgoPromise<chrome.tabs.Tab[]>((resolve, reject) => {
-		browser.tabs.query({active: true, currentWindow: true}).then(resolve, reject);
-	})
-	.then((tabs) => {
+	browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
 		if (tabs.length !== 1) {
 			throw new Error("Failed to get current tab");
 		}
-		return tabs[0];
+		return <chrome.tabs.Tab> tabs[0];
 	});
 const activeTabURLPromise =
 	activeTabPromise && activeTabPromise.then((tab) => {
@@ -83,7 +79,7 @@ export default {
 	},
 	created (this: any) {
 		if (isPopup && activeTabURLPromise) {
-			ZalgoPromise.all([activeTabURLPromise, activeTabCanRunPromise])
+			Promise.all([activeTabURLPromise, activeTabCanRunPromise])
 				.then(([url, canRun]) => {
 					if (canRun) {
 						this.search = hrefNoHash(url);

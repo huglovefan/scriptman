@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import {ZalgoPromise} from "zalgo-promise";
 import {isBackgroundPage} from "../misc/isBackgroundPageWindow";
 import {BadgeManager} from "./BadgeManager";
 import {fixupAndApplyStorage} from "./fixupAndApplyStorage";
@@ -33,11 +32,11 @@ type Storage = {[key: string]: any};
 	await scriptStore.init();
 	
 	(<BackgroundPageWindow> window).ScriptManager = {
-		get: (id: string) => {
-			return ZalgoPromise.resolve(scriptStore.getScript(id));
+		get: async (id: string) => {
+			return scriptStore.getScript(id);
 		},
-		getAll: () => {
-			return ZalgoPromise.resolve(scriptStore.getAllScripts());
+		getAll: async () => {
+			return scriptStore.getAllScripts();
 		},
 		importStorage: (storage: Storage) => {
 			return fixupAndApplyStorage(storage, true);

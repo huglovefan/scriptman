@@ -1,4 +1,3 @@
-import {ZalgoPromise} from "zalgo-promise";
 import {getScriptManager} from "../misc/getBackgroundPage";
 
 export const select = (selector: string, scope: NodeSelector) => {
@@ -44,7 +43,7 @@ export function createElement (tagName: string, properties: object | null = null
 export {getScriptManager};
 
 export const documentLoaded = <T = void> (x?: T) =>
-	new ZalgoPromise<T>((resolve) => {
+	new Promise<T>((resolve) => {
 		if (document.readyState !== "loading") {
 			resolve(x);
 		} else {
@@ -63,7 +62,7 @@ type EventRaceList =
 	[EventTarget, string, string, string, string, string, string, string, string];
 
 export const eventRace = (...lists: EventRaceList[]) => {
-	return new ZalgoPromise<Event>((resolve) => {
+	return new Promise<Event>((resolve) => {
 		const callback = (event: Event) => {
 			resolve(event);
 			for (const [target, ...events] of lists) {

@@ -1,8 +1,6 @@
 import browser from "webextension-polyfill";
-import {ZalgoPromise} from "zalgo-promise";
 import {CHROME, FIREFOX} from "../browser/browser";
 import {Event} from "../misc/Event";
-import {returnFalse} from "../misc/functionConstants";
 import {CssSection, JsSection} from "./Section";
 import {snapshot} from "./snapshot";
 
@@ -42,32 +40,33 @@ export abstract class Injection {
 		this.onInjected = new Event();
 		this.onRemoved = new Event();
 	}
-	protected callTabsAPI (methodName: TabsMethodName, tabId: number, frameId: number, isInjection: boolean) {
+	protected async callTabsAPI (methodName: TabsMethodName, tabId: number, frameId: number, isInjection: boolean) {
 		const method: TabsMethod | undefined = browser.tabs[methodName];
 		if (method === undefined) {
-			return ZalgoPromise.resolve(false);
+			return false;
 		}
 		this.injectDetails.frameId = frameId;
-		return method(tabId, this.injectDetails)
-			.then(() => {
-				const event = (isInjection) ? this.onInjected : this.onRemoved;
-				event.dispatch({tabId, frameId});
-				return true;
-			}, returnFalse);
+		try {
+			await method(tabId, this.injectDetails);
+			const event = (isInjection) ? this.onInjected : this.onRemoved;
+			event.dispatch({tabId, frameId});
+			return true;
+		} catch (error) {
+			return false;
+		}
 	}
-	public removeAll () {
+	public async removeAll () {
 		if (!(<typeof Injection> this.constructor).canRemove) {
 			return;
 		}
-		snapshot().then(({tabs, frames}) => {
-			for (const tab of tabs) {
-				const tabId = tab.id!;
-				for (const frame of frames[tabId]) {
-					const frameId = frame.frameId;
-					this.remove(tabId, frameId);
-				}
+		const {tabs, frames} = await snapshot();
+		for (const tab of tabs) {
+			const tabId = tab.id!;
+			for (const frame of frames[tabId]) {
+				const frameId = frame.frameId;
+				this.remove(tabId, frameId);
 			}
-		});
+		}
 	}
 	public abstract inject (tabId: number, frameId: number): PromiseLike<boolean>;
 	public abstract remove (tabId: number, frameId: number): PromiseLike<boolean>;
@@ -76,26 +75,26 @@ export abstract class Injection {
 export class CssInjection extends Injection {
 	public static readonly isStatic = true;
 	public static readonly canRemove = supportsRemoveCSS;
-	public inject (tabId: number, frameId: number) {
-		return super.callTabsAPI("insertCSS", tabId, frameId, true);
+	public async inject (tabId: number, frameId: number) {
+		return await super.callTabsAPI("insertCSS", tabId, frameId, true);
 	}
-	public remove (tabId: number, frameId: number) {
+	public async remove (tabId: number, frameId: number) {
 		if (!supportsRemoveCSS) {
-			return ZalgoPromise.resolve(false);
+			return false;
 		}
-		return super.callTabsAPI("removeCSS", tabId, frameId, false);
+		return await super.callTabsAPI("removeCSS", tabId, frameId, false);
 	}
 }
 
 export class JsInjection extends Injection {
 	public static readonly isStatic = false;
 	public static readonly canRemove = false;
-	public inject (tabId: number, frameId: number) {
-		return super.callTabsAPI("executeScript", tabId, frameId, true);
+	public async inject (tabId: number, frameId: number) {
+		return await super.callTabsAPI("executeScript", tabId, frameId, true);
 	}
 	// tslint:disable-next-line:prefer-function-over-method
-	public remove (_tabId: number, _frameId: number) {
+	public async remove (_tabId: number, _frameId: number) {
 		// not supported
-		return Promise.resolve(false);
+		return false;
 	}
 }

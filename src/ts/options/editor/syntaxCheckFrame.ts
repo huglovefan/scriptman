@@ -1,4 +1,3 @@
-import {ZalgoPromise} from "zalgo-promise";
 import {SyntaxCheckFunction, SyntaxCheckOptions, SyntaxCheckResult} from "./syntaxCheck";
 
 export interface SyntaxCheckWindow extends Window {
@@ -59,104 +58,102 @@ const isStrictSource = (source: string) => {
 };
 
 let offsets: {lineno: number, colno: number} | undefined;
-const getOffsets = () => {
+const getOffsets = async () => {
 	if (offsets !== undefined) {
-		return ZalgoPromise.resolve(offsets);
+		return offsets;
 	}
 	offsets = {lineno: 0, colno: 0};
-	return syntaxCheck("^").then((result) => {
-		if (result !== null) {
-			offsets!.lineno = result.lineno;
-			offsets!.colno = result.colno;
-		} else {
-			console.warn("syntaxCheck: failed to get offsets");
-		}
-		return offsets!;
-	});
+	const result = await syntaxCheck("^");
+	if (result !== null) {
+		offsets!.lineno = result.lineno;
+		offsets!.colno = result.colno;
+	} else {
+		console.warn("syntaxCheck: failed to get offsets");
+	}
+	return offsets!;
 };
 
-const syntaxCheck = (
+const syntaxCheck = async (
 	originalCode: string,
 	options: SyntaxCheckOptions = {}
-): ZalgoPromise<SyntaxCheckResult | null> => {
+): Promise<SyntaxCheckResult | null> => {
 	
-	return getOffsets().then<SyntaxCheckResult | null>((offsets) => {
-		
-		let code = originalCode;
-		
-		let addedLines = 0;
-		
-		code = `throw "ok";\n` + code;
+	const offsets = await getOffsets();
+	
+	let code = originalCode;
+	
+	let addedLines = 0;
+	
+	code = `throw "ok";\n` + code;
+	addedLines++;
+	
+	if (options.wrapFunction === "arrow") {
+		code =
+			`(()=>{\n` +
+			code + `\n` +
+			`})();`;
 		addedLines++;
+	} else if (options.wrapFunction === "normal") {
+		code =
+			`(function(){\n` +
+			code + `\n` +
+			`}());`;
+		addedLines++;
+	}
+	
+	if (options.strictMode || isStrictSource(originalCode)) {
+		code =
+			`"use strict";\n` +
+			code;
+		addedLines++;
+	}
+	
+	const blob = new Blob([code], {type: "application/javascript"});
+	const url = URL.createObjectURL(blob);
+	
+	const script = document.createElement("script");
+	script.src = url;
+	
+	return new Promise<SyntaxCheckResult | null>((resolve, reject) => {
 		
-		if (options.wrapFunction === "arrow") {
-			code =
-				`(()=>{\n` +
-				code + `\n` +
-				`})();`;
-			addedLines++;
-		} else if (options.wrapFunction === "normal") {
-			code =
-				`(function(){\n` +
-				code + `\n` +
-				`}());`;
-			addedLines++;
-		}
+		const onWindowError = (event: ErrorEvent) => {
+			if (
+				event.error instanceof Error &&
+				typeof event.lineno === "number" &&
+				typeof event.colno === "number"
+			) {
+				const lineno = event.lineno - addedLines - offsets.lineno;
+				const colno = event.colno - offsets.colno;
+				const position = linenoColno2Index(originalCode, lineno, colno);
+				resolve({
+					position,
+					lineno,
+					colno,
+					message: String(event.error),
+				});
+			} else if (event.error === "ok") {
+				resolve(null);
+			} else {
+				reject(new Error(`Syntax check failed (unknown error): ${event.error || event.message}`));
+			}
+			event.preventDefault();
+			cleanup();
+		};
+		const onScriptError = () => {
+			reject(new Error(`Syntax check failed: test script failed to load`));
+			cleanup();
+		};
 		
-		if (options.strictMode || isStrictSource(originalCode)) {
-			code =
-				`"use strict";\n` +
-				code;
-			addedLines++;
-		}
+		const cleanup = () => {
+			window.removeEventListener("error", onWindowError);
+			script.removeEventListener("error", onScriptError);
+			script.remove();
+		};
 		
-		const blob = new Blob([code], {type: "application/javascript"});
-		const url = URL.createObjectURL(blob);
+		window.addEventListener("error", onWindowError);
+		script.addEventListener("error", onScriptError);
 		
-		const script = document.createElement("script");
-		script.src = url;
-		
-		return new ZalgoPromise<SyntaxCheckResult | null>((resolve, reject) => {
-			
-			const onWindowError = (event: ErrorEvent) => {
-				if (
-					event.error instanceof Error &&
-					typeof event.lineno === "number" &&
-					typeof event.colno === "number"
-				) {
-					const lineno = event.lineno - addedLines - offsets.lineno;
-					const colno = event.colno - offsets.colno;
-					const position = linenoColno2Index(originalCode, lineno, colno);
-					resolve({
-						position,
-						lineno,
-						colno,
-						message: String(event.error),
-					});
-				} else if (event.error === "ok") {
-					resolve(null);
-				} else {
-					reject(new Error(`Syntax check failed (unknown error): ${event.error || event.message}`));
-				}
-				event.preventDefault();
-				cleanup();
-			};
-			const onScriptError = () => {
-				reject(new Error(`Syntax check failed: test script failed to load`));
-				cleanup();
-			};
-			
-			const cleanup = () => {
-				window.removeEventListener("error", onWindowError);
-				script.removeEventListener("error", onScriptError);
-				script.remove();
-			};
-			
-			window.addEventListener("error", onWindowError);
-			script.addEventListener("error", onScriptError);
-			
-			document.documentElement.append(script);
-		});
+		document.documentElement.append(script);
 	});
 };
 (<SyntaxCheckWindow> window).syntaxCheck = syntaxCheck;

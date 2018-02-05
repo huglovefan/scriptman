@@ -3,49 +3,44 @@
 //
 
 import browser from "webextension-polyfill";
-import {ZalgoPromise} from "zalgo-promise";
 import {FRAME_ID_TOP} from "./FRAME_ID_TOP";
 import {getBadgeManager} from "./getBackgroundPage";
 
 // the badge manager counts injections in the top frame,
 // so we can use it to check if scripts have been injected into it
-const checkWithBadgeManager = (tabId: number, frameId = FRAME_ID_TOP) => {
-	if (frameId !== FRAME_ID_TOP) {
-		return ZalgoPromise.resolve(null);
+const checkWithBadgeManager = async (tabId: number, frameId = FRAME_ID_TOP) => {
+	console.assert(frameId !== FRAME_ID_TOP);
+	const badgeManager = await getBadgeManager();
+	if (!badgeManager.tabHasScripts(tabId)) {
+		// not sure, maybe there just aren't any
+		return null;
 	}
-	return getBadgeManager()
-		.then((badgeManager) => {
-			if (badgeManager.tabHasScripts(tabId)) {
-				console.log("[canRunScripts] scripts have been ran in the tab");
-				return true;
-			}
-			return null;
-		});
+	console.log("[canRunScripts] scripts have been ran in the tab");
+	return true;
 };
 
-const checkWithExecuteScript = (tabId: number, frameId = FRAME_ID_TOP) => {
-	return new ZalgoPromise<boolean>((resolve) => {
-		browser.tabs.executeScript(tabId, {
+const checkWithExecuteScript = async (tabId: number, frameId = FRAME_ID_TOP) => {
+	try {
+		const results = await browser.tabs.executeScript(tabId, {
 			allFrames: false,
 			code: "true",
 			frameId,
 			matchAboutBlank: true,
 			runAt: "document_start",
-		}).then((results: any[]) => {
-			resolve(Array.isArray(results) && results.some(Boolean));
-		}).catch((error) => {
-			console.error(error);
-			resolve(false);
 		});
-	});
+		return Array.isArray(results) && results.some(Boolean);
+	} catch (error) {
+		console.error(error);
+		return false;
+	}
 };
 
-export const canRunScripts = (tabId: number, frameId = FRAME_ID_TOP) => {
+export const canRunScripts = async (tabId: number, frameId = FRAME_ID_TOP) => {
 	if (frameId === FRAME_ID_TOP) {
-		checkWithBadgeManager(tabId, frameId).then((result) => {
-			if (result !== null) return result;
-			return checkWithExecuteScript(tabId, frameId);
-		});
+		const result = await checkWithBadgeManager(tabId, frameId);
+		if (result !== null) {
+			return result;
+		}
 	}
-	return checkWithExecuteScript(tabId, frameId);
+	return await checkWithExecuteScript(tabId, frameId);
 };

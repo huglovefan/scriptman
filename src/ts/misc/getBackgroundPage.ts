@@ -3,7 +3,6 @@
 //
 
 import browser from "webextension-polyfill";
-import {ZalgoPromise} from "zalgo-promise";
 import {BackgroundPageWindow} from "../background/background";
 import {BadgeManager} from "../background/BadgeManager";
 import {ScriptManager} from "../background/ScriptManager";
@@ -16,18 +15,14 @@ export const getBackgroundPage = () => {
 		const win = window;
 		if (isBackgroundPage(win)) {
 			console.log("[getBackgroundPage] we're the background page");
-			backgroundPagePromise = ZalgoPromise.resolve(win);
+			backgroundPagePromise = Promise.resolve(win);
 		} else {
-			backgroundPagePromise = new ZalgoPromise<BackgroundPageWindow>((resolve, reject) => {
-				browser.runtime.getBackgroundPage()
-					.then((backgroundPage: BackgroundPageWindow) => {
-						if (!isBackgroundPage(backgroundPage)) {
-							reject(new Error("Couldn't get background page"));
-							return;
-						}
-						console.log("[getBackgroundPage] got it from browser.runtime");
-						resolve(backgroundPage);
-					}, reject);
+			backgroundPagePromise = browser.runtime.getBackgroundPage().then((backgroundPage) => {
+				if (!isBackgroundPage(backgroundPage)) {
+					throw new Error("Couldn't get background page");
+				}
+				console.log("[getBackgroundPage] got it from browser.runtime");
+				return backgroundPage;
 			});
 		}
 	} else {
@@ -42,16 +37,14 @@ interface ThingsToGet extends BackgroundPageWindow {
 	ScriptManager: ScriptManager;
 }
 
-const getThing = <K extends keyof ThingsToGet> (key: K, friendlyName: string = key) => {
-	return getBackgroundPage()
-		.then((backgroundPage) => {
-			const result = (<ThingsToGet> backgroundPage)[key];
-			if (result === undefined) {
-				throw new Error(`Couldn't get ${friendlyName}`);
-			}
-			return result;
-		});
+const getThing = async <K extends keyof ThingsToGet> (key: K) => {
+	const backgroundPage = await getBackgroundPage();
+	const result = (<ThingsToGet> backgroundPage)[key];
+	if (result === undefined) {
+		throw new Error(`Couldn't get ${key}`);
+	}
+	return result;
 };
 
-export const getBadgeManager = () => getThing("BadgeManager", "badge manager");
-export const getScriptManager = () => getThing("ScriptManager", "script manager");
+export const getBadgeManager = () => getThing("BadgeManager");
+export const getScriptManager = () => getThing("ScriptManager");
