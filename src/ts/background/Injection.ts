@@ -56,7 +56,7 @@ export abstract class Injection {
 			}, returnFalse);
 	}
 	public removeAll () {
-		if ((<typeof Injection> this.constructor).canRemove) {
+		if (!(<typeof Injection> this.constructor).canRemove) {
 			return;
 		}
 		snapshot().then(({tabs, frames}) => {
